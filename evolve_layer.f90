@@ -1,8 +1,8 @@
 !-------------------------------------------------
-! Subroutine to evolve the disk 
+! Subroutine to evolve a two layer disk
 !-------------------------------------------------
 
-subroutine evolve
+subroutine evolve_layers
 
   use gravdata
   use magdata
@@ -18,7 +18,7 @@ subroutine evolve
 
   ! Determine disc properties
 
-  call calc_layers
+  call disc_properties
 
   ! Determine maximum safe timestep
 
@@ -88,4 +88,4 @@ subroutine evolve
   !$OMP END PARALLEL
 
   return
-end subroutine evolve
+end subroutine evolve_layers

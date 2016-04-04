@@ -1,4 +1,9 @@
 test	- file prefix
+f	- Run mode (f=fixed alpha, g=self-gravitating, Q=fixed Toomre Q)
+n	- Add an MRI-active layer?
+0.001   - Alpha (for fixed alpha runs)
+1.0e6   - Maximum Runtime (yr)
+1.0e2   - Snapshot Interval (yr)
 500	- number of active r gridpoints
 100     - number of active z gridpoint
 0.35	- mass of star (solar masses)
@@ -10,9 +15,7 @@ test	- file prefix
 50.0	- outer grid radius (AU)
 40.0	- sigma spectral break radius (AU)
 30.0 	- max height above disk (AU)
-1.0e6	- time to finish run (yr)
-1.0e2	- time to dump full output (yr)
 1.0d-8 	- initial accretion rate in solar masses / yr
-7.5d13	- inner radius for photoevaporation
+10.0	- inner radius for photoevaporation (AU)
 5.0d-9  - initial wind mass loss rate (evaluated to 25AU)
 0.05	move planets straying inside this radius (AU)

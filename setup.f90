@@ -1,3 +1,4 @@
+
 !------------------------------------------------
 ! Subroutine to setup initial conditions and grid
 !------------------------------------------------
@@ -5,6 +6,7 @@
 subroutine setup
 
   use gravdata
+  use magdata
   use planetdata
   use winddata
   use unitdata
@@ -15,46 +17,68 @@ subroutine setup
   real(kind=8) :: mdisk,mdisktry,dz
   real(kind=8) :: beta,rwindout,area, sig_0_try,tolerance
 
-  integer :: i,ngrid
+  integer :: i,ngrid, nzeros
 
+  logical :: disk_exist
 
-  open (unit=10,file='disc.par',form='formatted',status='old')
+  !	Check that parameter file exists
 
-  read(10,*) prefix
+  inquire(file=paramfile,exist=disk_exist)
 
-  read (10,*) nrgrid
-  read (10,*) nzgrid
-  read(10,*) mstar
-  read(10,*) mdisk
-  read(10,*) sig_r
-  read(10,*) T0
-  read(10,*) p_T
-  read (10,*) rin 
-  read (10,*) rout
-  read(10,*) rmax 
-  read(10,*) zmax
-  read (10,*) trun
-  read (10,*) tdump	
-  read (10,*) mdot_init
-  read (10,*) rwind	
-  read (10,*) mdot_wind	
-  read (10,*) rremove
+  if(disk_exist.eqv..false.) then
+   print '(a,a,a)', 'ERROR! input file ',paramfile,' does not exist!'
+   stop
+  endif
 
-  prefix = TRIM(prefix)
+  open (unit=10,file=paramfile,form='formatted',status='old')
+
+  read(10,*) prefix  ! File output prefix
+  read(10,'(a1)') runmode ! f = fixed alpha, g=self-gravitating, Q = self-gravitating, fixed Q
+  read(10,'(a1)') layerchoice ! Run this with an MRI upper layer? (y/n)
+  read(10,*) alpha_visc ! If fixed alpha viscosity, define it here
+  read(10,*) trun    ! Maximum runtime
+  read(10,*) tdump   ! Snapshot Interval
+  read(10,*) nrgrid  ! Number of r cells
+  read(10,*) nzgrid  ! Number of z cells
+  read(10,*) mstar   ! Star mass
+  read(10,*) mdisk   ! Disc Mass
+  read(10,*) sig_r   ! Initial surface density profile
+  read(10,*) T0      ! Temperature at 1 AU
+  read(10,*) p_T     ! Temperature profile
+  read(10,*) rin     ! Inner disc radius
+  read(10,*) rout    ! Spectral Break
+  read(10,*) rmax    ! Outer disc radius
+  read(10,*) zmax    ! Maximum altitude
+  read(10,*) mdot_init ! Initial accretion rate
+  read(10,*) rwind    ! Wind Radius
+  read(10,*) mdot_wind ! Wind loss rate
+  read(10,*) rremove  ! Radius at which planets are removed
+
+  prefix = trim(prefix)
 
   write(*,*) " "
   write(*,*) "-----------------------------------------------"
-  write(*,*) "           SEMI ANALYTIC DISC CODE"
+if(runmode=='g') then
+  write(*,*) "           VISCOUS SELF-GRAVITATING DISC CODE"
+else if(runmode=='Q')then
+    write(*,*) "         FIXED-Q VISCOUS SELF-GRAVITATING DISC CODE"
+else
+    write(*,*) "         FIXED-ALPHA VISCOUS DISC CODE"
+endif
   write(*,*) "     Modified by D.Forgan, 29th April 2010       "
   write(*,*) "-----------------------------------------------"
   write(*,*) " "
   write(*,*) "-----------------------------------------------"
-  write(*,*) " Input file: ./disc.par"
+  write(*,*) " Input file: ./",trim(paramfile)
   write(*,*) "-----------------------------------------------"
   write(*,*) " "
   write(*,*) " "			
   write(*,*) "-----------------------------------------------"
-  write (*,100) ' - nrgrid  = ',ngrid
+
+  if(layerchoice=='y') then
+    write(*,*) 'Disc will run with an MRI active upper layer'
+endif
+  write (*,100) ' - nrgrid  = ',nrgrid
   write(*,100)  ' - nzgrid  = ',nzgrid
   write(*,101) ' - mstar = ', mstar, ' solar masses'
   write(*,101) ' initial mdisk = ', mdisk, ' solar masses'
@@ -73,13 +97,22 @@ subroutine setup
 100 format (A,I5)
 101 format (A,E14.3,A)
 
+
+  ! Predicted number of files, and resulting format
+
+    nfiles = trun/tdump
+    nzeros = int(log10(nfiles)) +2
+    write(zerostring, '(I1)')nzeros
+    snapshotformat = "(I"//TRIM(zerostring)//"."//TRIM(zerostring)//")"
+
   ! Convert variables to cgs units
 
-  mdot_init = mdot_init * 6.2943d25
-  mdot_wind = mdot_wind * 6.2943d25
+  mdot_init = mdot_init * msolyr
+  mdot_wind = mdot_wind * msolyr
 
   rin = rin*AU
   rout = rout*AU
+  rwind = rwind*AU
   rmax = rmax *AU
   zmax = zmax*AU
 
@@ -130,11 +163,30 @@ allocate(rf1_2(nmax))
 allocate(drfm1(nmax))
 allocate(zgrid(nmax))
 
+
+! Set up layer arrays
+
+allocate(sigma_m(nmax))
+allocate(sigma_tot(nmax))
+allocate(cs_m(nmax))
+allocate(tau_m(nmax))
+allocate(nu_m(nmax))
+allocate(gamma_m(nmax))
+allocate(mu_m(nmax))
+allocate(kappa_m(nmax))
+allocate(fullmri(nmax))
+
+sigma_m(:) = 0.0
+sigma_tot(:) = 0.0
+mag_switch = 0.0
+fullmri(:) = 0.0
+
   sigma(:) = 0.0
   Tc(:) = 0.0
   sigdot(:) = 0.0
+
 ! Set up source T according to input data
-! (TODO)
+! TODO - add other temperature options
 
   T_source(:) = 10.0
 
@@ -142,9 +194,6 @@ allocate(zgrid(nmax))
   call eosread
 
   open(itime,file=TRIM(prefix)//'.log',status='unknown')
-
-
-
 
   ! Set up the basic grid
   ! rz denotes zone centered radius
@@ -205,15 +254,16 @@ allocate(zgrid(nmax))
 
   ! Set up surface density - iterates towards correct initial disk mass
 
-  print*, 'Beginning sigma normalisation iteration'
+  print*, 'Setting up disc surface density: Beginning iteration'
+
   mdisk = mdisk/solarmass
   rmax = rmax/AU
 
-  IF(sig_r==2) THEN
+  if(sig_r==2) THEN
      sig_0_try = mdisk/(2.0*pi*log(rmax))
   ELSE
      sig_0_try = mdisk*(2.0-sig_r)/(2.0*pi*rmax**(2.0-sig_r))
-  ENDIF
+  ENDif
 
   mdisktry = 0.0d0	
 
@@ -226,14 +276,14 @@ allocate(zgrid(nmax))
 
      do i = isr,ier 
 
-  	If (rz(i).lt.rmax*AU) Then
+  	if (rz(i).lt.rmax*AU) Then
            sigma(i) = sig_0_try*(rz(i)/AU)**(-sig_r)
 
   	Else
            sigma(i) = sig_0_try*(rz(i)/AU)**(-sig_r)
            sigma(i) = sigma(i)*DExp(-(rz(i)-rmax*AU)**2.0d0/(5.0d0*AU)**2.0d0)
 
-  	EndIf
+  	Endif
 
 	mdisktry = mdisktry + 2.0d0*pi*rz(i)*(rf(i+1)-rf(i))*sigma(i)
 
@@ -242,17 +292,15 @@ allocate(zgrid(nmax))
      mdisktry = mdisktry/solarmass
 
      tolerance = (mdisk-mdisktry)/mdisk
-
-     print*, mdisk,mdisktry,sig_0_try, tolerance
      sig_0_try = sig_0_try*(1.0+ tolerance)
-     print*, sig_0_try
 
   enddo
 
+  sigma_tot(:) = sigma(:)
   mdisk = mdisk*solarmass
   rmax = rmax*AU
-  write(*,*) 'Disc has iterated initial mass of ',mdisktry
 
+  write(*,*) 'Disc has iterated initial mass of ',mdisktry
 
   close(12)
 
@@ -261,11 +309,13 @@ allocate(zgrid(nmax))
   sigma(isr-1) = 0.0d0
   sigma(ier+1) = 0.0d0  
 
-  write (*,*)
+  !TODO - setup the layer properties here
+  ! Calculate disc properties for this setup
+
+  print*, 'Calculating other disc properties'
+  call disc_properties
   write (*,*) '--- setup completed'
 
-  snew(:) = 0.0
-  call calc_grav(snew)
 
   return
 end subroutine setup

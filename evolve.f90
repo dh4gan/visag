@@ -19,7 +19,8 @@ subroutine evolve
 
   snew(:) = 0.0
   Tnew(:) = 0.0
-  call calc_grav(snew)
+
+  call disc_properties
 
   ! Determine maximum safe timestep
 
@@ -69,13 +70,10 @@ subroutine evolve
 
      vr = -3.0*term2/(rf(i)*sigma(i))
      dTcdr = (Tc(i+1) -Tc(i))*drzm1(i)
-   !  vr = 0.0
-   !  dTcdr = 0.0
 
      snew(i) = sigma(i) + 3.0d0*rzm1(i)*drzm1(i)*(term1-term2)*dt +sigdot(i)*dt
      Tnew(i) = Tc(i) + 2.0*dt*(heatfunc(i)-coolfunc(i))/(cp(i)*sigma(i)) -vr*dTcdr*dt
-   !  write(77,*)dt, i,sigma(i), Tc(i), tau(i), 2.0*dt*heatfunc(i)/(cp(i)*sigma(i)), &
-    !      -2.0*dt*coolfunc(i)/(cp(i)*sigma(i)),tcool(i),vr*dTcdr*dt
+
   enddo
   !$OMP END DO
   !$OMP END PARALLEL
@@ -89,7 +87,6 @@ subroutine evolve
   do i = isr, ier
      sigma(i) = snew(i)  
      Tc(i) = Tnew(i)
-
   enddo
   !$OMP END DO
   !$OMP END PARALLEL

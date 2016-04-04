@@ -4,7 +4,7 @@ module gravdata
 
  integer :: nrgrid,nzgrid,isr,ier,isz,iez, nmax
  real :: rin,rout,zmax, p_T, T0
- real :: t,dt
+ real :: t,dt, alpha_visc
  real(kind=8) :: mstar
 
   !	Zone centred arrays

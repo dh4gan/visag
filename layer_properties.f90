@@ -1,6 +1,7 @@
-SUBROUTINE calc_mag
-  ! Subroutine checks for MRI activation at all disc radii
-  ! (either fully MRI or upper layer)
+SUBROUTINE layer_properties
+  ! Subroutine calculates evolution of an MRI activated layer
+  ! Checks for MRI activation at all disc radii
+  ! either fully MRI to the midplane, or only the upper layer
 
   use gravdata
   use magdata
@@ -8,9 +9,9 @@ SUBROUTINE calc_mag
 
   implicit none
 
-  real(kind=8) :: coolfunc, twoDint,fine,oldtry
+  real(kind=8) :: coolfunclayer, twoDint,fine,oldtry
   real(kind=8) :: Teff,temp1,temp2,sig1,sig2
-  real(kind=8) :: H, rho,Tnew,heat,cool
+  real(kind=8) :: H, rho,Tnewlayer,heat,cool
 
   real(kind=8) :: try,T_try,rho_m, alpha_max,tcool_target
 
@@ -74,17 +75,17 @@ SUBROUTINE calc_mag
            nu_m(i) = alpha_m*cs_m(i)*cs_m(i)/omegaK(i)
 
            heat = 9.0*nu_m(i)*omegaK(i)*omegaK(i)*sigma_m(i)/8.0        
-           Tnew = heat*(tau_m(i) + 1.0/tau_m(i))/stefan
+           Tnewlayer = heat*(tau_m(i) + 1.0/tau_m(i))/stefan
            Teff = Tc(i)**4/(tau_m(i)+1.0/(tau_m(i)))
 
            cool = stefan*Teff
-           Tnew = Tnew**0.25
+           Tnewlayer = Tnewlayer**0.25
            Teff = Teff**0.25d0
 
            IF(heat > cool) temp1 = Tc(i)
            IF(heat < cool) temp2 = Tc(i)
            
-           try = (Tnew-Tc(i))/Tc(i)
+           try = (Tnewlayer-Tc(i))/Tc(i)
 
            Tc(i) = (temp2+temp1)/2.0
 
@@ -141,4 +142,4 @@ SUBROUTINE calc_mag
 
 return
 
-END SUBROUTINE calc_mag
+END SUBROUTINE layer_properties

@@ -5,17 +5,20 @@ module unitdata
   integer,parameter :: itime = 80
   integer, parameter :: iprof = 83
   integer, parameter :: ispec = 78
-  integer :: nrhopoints,nUpoints,counter
-  real :: tdump, trun, tslice
+  integer :: nrhopoints,nUpoints,snapshotcounter
+  real :: tdump, trun, tslice,nfiles
 
-  real(kind=8),parameter :: G = 6.67d-8
+  real(kind=8), parameter :: G = 6.67d-8
   real(kind=8), parameter :: AU = 1.496e13	 ! AU
   real(kind=8), parameter :: yr = 3.15e7	 ! year
   real(kind=8), parameter :: solarmass = 1.99e33 ! solar mass
+  real(kind=8), parameter :: msolyr = solarmass/yr
 
-  real(kind=8), parameter :: Qcrit = 1.5		 ! Critical Toomre Parameter	
+  real(kind=8), parameter :: Qcrit = 1.5		 ! Critical Toomre Parameter
 
   real(kind=8), parameter :: pi =3.1415926535
+  real(kind=8), parameter :: twopi = 2.0*pi
+  real(kind=8), parameter :: pibytwo = 0.5*pi
   real(kind=8), parameter :: stefan = 5.67d-5    ! Stefan-Boltzmann constant
   real(kind=8), parameter :: planck = 6.626d-27  ! Planck's constant
   real(kind=8), parameter :: pc = 3.08d18        ! parsec			
@@ -24,5 +27,9 @@ module unitdata
 
   real(kind=8), allocatable, dimension(:,:,:) :: eostable
 
+character(len=1) :: runmode, layerchoice, zerostring
+character(len=6) :: snapshotformat
   character(len=100) :: fileno,prefix
+  character(len=25), parameter :: paramfile = 'semi_analytic_disc.params'
+
 end module unitdata

@@ -1,9 +1,9 @@
 
 ! ----------------------------------------------------------
-! Subroutine to calculate t_cool
+! Calculate the properties of the disc plane and upper layer
 ! ----------------------------------------------------------
 
-subroutine calc_layers
+subroutine disc_properties
 
   use gravdata
   use magdata
@@ -21,18 +21,18 @@ subroutine calc_layers
   tau_m(:) = 0.0
   sigma(:) = sigma_tot(:)
 
-  CALL calc_grav(tau_m)
+  CALL midplane_properties(tau_m)
 
-  IF(mag_switch==1.0) THEN
+  IF(layerchoice=='y' .and. mag_switch==1.0) THEN
      ! Now look for MRI activation either fully or in the layer
 
-     CALL calc_mag
+     CALL layer_properties
 
      sigma_tot(:) = sigma(:) + sigma_m(:)
 
      ! Recalculate self-gravitating layer properties
 
-     CALL calc_grav(tau_m)
+     CALL midplane_properties(tau_m)
 
      ! Otherwise, MRI switch not active and set layer's properties to zero
   ELSE
@@ -49,4 +49,4 @@ subroutine calc_layers
   return
 
 
-end subroutine calc_layers
+end subroutine disc_properties

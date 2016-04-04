@@ -11,20 +11,11 @@
 # Compiler variables for WKMR/DHF:
 FC     = gfortran
 
-# For big endian files generated from stacpolly use these flags
-#FFLAGS = -O3 -fPIC -frecord-marker=4 -fconvert=swap -fdefault-real-8
-
-#FC = ifort
-#ZFFLAGS= -openmp -autodouble -O3
-#ZZFFLAGS = ${ZFFLAGS} # -qflttrap=enable:invalid:zerodivide -g -C -qsigtrap -qf\
-loat=nans                                                                      \
-                                                                                
-#FFLAGS = ${ZZFFLAGS} -fPIC -i-dynamic -xW
 
 # For real*8 files
-FFLAGS = -O3 -fdefault-real-8 -fbounds-check 
+FFLAGS = -O3 -fdefault-real-8 -fbounds-check
 
-# For files generated on mhor use these flags
+# For 
 #FFLAGS = -O3 -frecord-marker=4  -Wall
 
 # Create object files:
@@ -33,9 +24,12 @@ FFLAGS = -O3 -fdefault-real-8 -fbounds-check
 %.o: %.f90
 	$(FC) $(FFLAGS) -c $<
 
-SOURCESAF90 = grav_module.f90 planet_module.f90 \
+SOURCESAF90 = grav_module.f90 mri_module.f90 planet_module.f90 \
 	      unit_module.f90 wind_module.f90 main.f90 \
-	      eos.f90 eosread.f90 eos_T.f90 evolve.f90 calc_grav.f90 \
+	      eos.f90 eosread.f90 eos_T.f90 eos_cs.f90 disc_properties.f90 \
+              evolve.f90 evolve_layer.f90 layer_properties.f90 midplane_properties.f90 \
+	      midplane_properties_grav.f90 midplane_properties_fixedalpha.f90 \
+	      midplane_properties_grav_fixedQ.f90  \
               luminosity.f90 setup.f90 set_accrete.f90 write_dump.f90 	      
 
 OBJECTSA    = $(SOURCESAF90:.f90=.o)

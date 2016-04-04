@@ -9,35 +9,37 @@ program semi_analytic_disc
   real(kind=8) :: trem_dump
 
   integer :: i, ifirst, ifirst2
-  logical :: disk_exist
 
-  !	Check that parameter file exists
-
-  inquire(file='disc.par',exist=disk_exist)
-
-  IF(disk_exist.eqv..false.) THEN
-     print*, 'ERROR! input file disc.par does not exist!'	
-     STOP
-  ENDIF
 
   !	Setup grid, etc			
   call setup
 
   !	Write first dump
   t = 0.0d0
-  counter = 1
-  call write_dump	
-  print*, 'Initial Conditions Written to File'
+  snapshotcounter = 1
+  call write_dump
+
+  print '(a)', 'Initial Conditions Written to File'
+
   trem_dump = tdump
 
-  do while (t .lt. trun)			
-     call evolve
+  ! Begin the simulation
+  do while (t .lt. trun)
+
+    write(*,'(a,1e15.5,a)') 'Time: ',t/yr,' years'
+    if(runmode=='l') then
+
+     call evolve_layers
+else
+    call evolve
+endif
+
      t = t + dt
   
      trem_dump = trem_dump - dt			
   
      If (trem_dump .lt. 0.0d0) then
-        counter = counter +1
+        snapshotcounter = snapshotcounter +1
         call write_dump			
         trem_dump = tdump			   	
      endif

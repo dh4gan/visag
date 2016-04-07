@@ -8,7 +8,7 @@
     implicit none
     
     real,dimension(nmax) :: tauplus
-    real(kind=8) :: alpha_visc,  twoDint,fine,oldtry
+    real(kind=8) :: twoDint,fine,oldtry
     real(kind=8) :: rho,H, Teff
     integer :: i
 

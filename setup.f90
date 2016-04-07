@@ -13,7 +13,7 @@ subroutine setup
 
   implicit none
 
-  real(kind=8) :: rmax,sig_r
+  real(kind=8) :: rmax,sig_r, gamma_init,mu_init
   real(kind=8) :: mdisk,mdisktry,dz
   real(kind=8) :: beta,rwindout,area, sig_0_try,tolerance
 
@@ -36,6 +36,8 @@ subroutine setup
   read(10,'(a1)') runmode ! f = fixed alpha, g=self-gravitating, Q = self-gravitating, fixed Q
   read(10,'(a1)') layerchoice ! Run this with an MRI upper layer? (y/n)
   read(10,*) alpha_visc ! If fixed alpha viscosity, define it here
+  read(10,'(a)') tempchoice ! Background Temperature: f=fixed, s=stellar
+  read(10,*) T_background ! If fixed background temperature, define it here
   read(10,*) trun    ! Maximum runtime
   read(10,*) tdump   ! Snapshot Interval
   read(10,*) nrgrid  ! Number of r cells
@@ -43,8 +45,10 @@ subroutine setup
   read(10,*) mstar   ! Star mass
   read(10,*) mdisk   ! Disc Mass
   read(10,*) sig_r   ! Initial surface density profile
-  read(10,*) T0      ! Temperature at 1 AU
+  read(10,*) T_1AU     ! Temperature at 1 AU
   read(10,*) p_T     ! Temperature profile
+  read(10,*) gamma_init ! Initial gamma value for disc
+  read(10,*) mu_init ! Initial mean molecular weight
   read(10,*) rin     ! Inner disc radius
   read(10,*) rout    ! Spectral Break
   read(10,*) rmax    ! Outer disc radius
@@ -124,6 +128,7 @@ endif
 
 ! Allocate arrays
 
+  print*, 'Allocating arrays: '
   nmax = nrgrid + 10
 
 allocate(sigma(nmax))
@@ -146,10 +151,10 @@ allocate(coolfunc(nmax))
 allocate(cp(nmax))
 allocate(sigdot(nmax))
 
-! EDIT - Watch this !
+! Set these for initial step (EOS handles it afterward)
+gamma(:) = gamma_init
 cp(:) = 0.0
-mu(:) = 2.4
-gamma(:) = 7.0/5.0
+mu(:) = mu_init
 
 ! Set up grid arrays
 
@@ -162,7 +167,6 @@ allocate(rf(nmax))
 allocate(rf1_2(nmax))
 allocate(drfm1(nmax))
 allocate(zgrid(nmax))
-
 
 ! Set up layer arrays
 
@@ -185,10 +189,6 @@ fullmri(:) = 0.0
   Tc(:) = 0.0
   sigdot(:) = 0.0
 
-! Set up source T according to input data
-! TODO - add other temperature options
-
-  T_source(:) = 10.0
 
   !	Read in EOS
   call eosread
@@ -229,9 +229,32 @@ fullmri(:) = 0.0
      rz1_2(i) = sqrt(rz(i))
 
 ! Calculate initial temperatures as well
-     Tc(i) = T0*(rz(i)/AU)**(-p_T)
+     Tc(i) = T_1AU*(rz(i)/AU)**(-p_T)
 
   enddo
+
+! Set up background temperature according to input data
+
+print*, 'tempchoice: ', tempchoice, trim(tempchoice)
+
+
+if(tempchoice=='f') then
+
+print*, 'Setting up external temperature bath fixed at ',T_background
+
+T_source(:) = T_background
+
+else if(tempchoice == 's') then
+
+print*, 'Imposing stellar irradiation temperature bath',T_background
+
+do i=isr+1,ier+1
+    T_source(i) =280.0*mstar*(sqrt(rz(i)/AU))/solarmass
+    if(T_source(i)< T_background) T_source(i) = T_background
+    if(Tc(i) < T_source(i)) Tc(i) =T_source(i)
+
+enddo
+endif
 
   zgrid(isz) = 0.0d0
   do i 	= isz+1, iez
@@ -309,7 +332,6 @@ fullmri(:) = 0.0
   sigma(isr-1) = 0.0d0
   sigma(ier+1) = 0.0d0  
 
-  !TODO - setup the layer properties here
   ! Calculate disc properties for this setup
 
   print*, 'Calculating other disc properties'

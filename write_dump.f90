@@ -13,8 +13,8 @@ subroutine write_dump
 
   implicit none
 
-  real(kind=8) :: alpha_visc,sig_max,mdisk, tot_lumin,tcoolmin
-real :: mdot_grav, mdot_mag, grav_max,mag_max, mmag,mgrav
+  real(kind=8) :: sig_max,mdisk, tot_lumin,tcoolmin
+  real :: mdot_grav, mdot_mag, grav_max,mag_max, mmag,mgrav
   integer :: i,ifirst	
 
   write (*,103) 'Output at time t = ',t/yr
@@ -95,7 +95,7 @@ mdot_mag = mdot_mag*yr/solarmass
 
 ! Write out snapshot data (disk mass, sigma, total luminosity)
 write(itime,110) t/yr, mdisk, tot_lumin, sig_max,mgrav,mmag,grav_max,mag_max,mdot_grav,mdot_mag
-
+call flush(itime)
  
   return
 

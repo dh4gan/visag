@@ -26,7 +26,6 @@ program semi_analytic_disc
   ! Begin the simulation
   do while (t .lt. trun)
 
-    write(*,'(a,1e15.5,a)') 'Time: ',t/yr,' years'
     if(runmode=='l') then
 
      call evolve_layers

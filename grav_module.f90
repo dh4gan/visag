@@ -3,8 +3,8 @@ module gravdata
 ! Also contains mstar, t and dt for expediency
 
  integer :: nrgrid,nzgrid,isr,ier,isz,iez, nmax
- real :: rin,rout,zmax, p_T, T0
- real :: t,dt, alpha_visc
+ real :: rin,rout,zmax, p_T, T_1AU
+ real :: t,dt, alpha_visc, T_background
  real(kind=8) :: mstar
 
   !	Zone centred arrays

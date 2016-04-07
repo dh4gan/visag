@@ -74,10 +74,9 @@
         coolfunc(i) = 0.0
      ENDIF
 
-    ! TODO - define fixed alpha variable
      alpha_g(i) = alpha_visc
 
-     nu_tc(i) = alpha_g(i)*cs(i)*cs(i)/omegaK(i)         
+     nu_tc(i) = alpha_g(i)*cs(i)*cs(i)/omegaK(i)
 
   enddo
   !$OMP END DO

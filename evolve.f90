@@ -43,6 +43,7 @@ subroutine evolve
   enddo
 
   dt = dtmin
+    
   IF(dt>tdump) dt = tdump/2.0
 
   ! Set v_r = 0 outer bc
@@ -73,7 +74,6 @@ subroutine evolve
 
      snew(i) = sigma(i) + 3.0d0*rzm1(i)*drzm1(i)*(term1-term2)*dt +sigdot(i)*dt
      Tnew(i) = Tc(i) + 2.0*dt*(heatfunc(i)-coolfunc(i))/(cp(i)*sigma(i)) -vr*dTcdr*dt
-
   enddo
   !$OMP END DO
   !$OMP END PARALLEL

@@ -1,16 +1,20 @@
 test	- file prefix
 f	- Run mode (f=fixed alpha, g=self-gravitating, Q=fixed Toomre Q)
 n	- Add an MRI-active layer?
-0.001   - Alpha (for fixed alpha runs)
+0.01   - Alpha (for fixed alpha runs)
+f   - Background temperature: (f=fixed T, s=stellar ,Ida and Lin prescription)
+10.0    - Minimum background temperature value
 1.0e6   - Maximum Runtime (yr)
 1.0e2   - Snapshot Interval (yr)
-500	- number of active r gridpoints
-100     - number of active z gridpoint
-0.35	- mass of star (solar masses)
-0.35 	- initial mass of disk (solar masses)
+100	- number of active r gridpoints
+10     - number of active z gridpoint
+1.0	- mass of star (solar masses)
+0.05 	- initial mass of disk (solar masses)
 1.0 	- Sigma power law index
 1000.0	- Temperature at 1 AU (in K)
 0.75	- Initial Temperature powerlaw
+1.4     - Initial Ratio of specific heats (gamma)
+2.4     - Initial Mean Molecular Weight
 0.5	- inner grid radius (AU)
 50.0	- outer grid radius (AU)
 40.0	- sigma spectral break radius (AU)

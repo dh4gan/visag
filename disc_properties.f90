@@ -19,7 +19,7 @@ subroutine disc_properties
   ! Calculate disc properties assuming entirely self-gravitating
 
   tau_m(:) = 0.0
-  sigma(:) = sigma_tot(:)
+  sigma_tot(:) = sigma(:)
 
   CALL midplane_properties(tau_m)
 

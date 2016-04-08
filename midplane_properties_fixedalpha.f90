@@ -47,7 +47,7 @@
 !        write(77,*) t,i, rho,cs(i),H/AU, Tc(i),Q(i)
 
         ! Now calculate cooling time
-        tau(i) = H*kappa(i)*rho + tauplus(i)
+        tau(i) = sigma(i)*kappa(i) + tauplus(i)
 
         ! Cooling function for disc
         coolfunc(i) = 16.0d0/3.0d0*stefan*(Tc(i)**4.0d0-T_source(i)**4.0d0)

@@ -74,6 +74,7 @@ subroutine evolve
 
      snew(i) = sigma(i) + 3.0d0*rzm1(i)*drzm1(i)*(term1-term2)*dt +sigdot(i)*dt
      Tnew(i) = Tc(i) + 2.0*dt*(heatfunc(i)-coolfunc(i))/(cp(i)*sigma(i)) -vr*dTcdr*dt
+
   enddo
   !$OMP END DO
   !$OMP END PARALLEL
@@ -85,7 +86,7 @@ subroutine evolve
   !$OMP private(i)
   !$OMP DO SCHEDULE(runtime)
   do i = isr, ier
-     sigma(i) = snew(i)  
+     sigma(i) = snew(i)
      Tc(i) = Tnew(i)
   enddo
   !$OMP END DO

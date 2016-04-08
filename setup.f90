@@ -235,9 +235,6 @@ fullmri(:) = 0.0
 
 ! Set up background temperature according to input data
 
-print*, 'tempchoice: ', tempchoice, trim(tempchoice)
-
-
 if(tempchoice=='f') then
 
 print*, 'Setting up external temperature bath fixed at ',T_background
@@ -269,11 +266,10 @@ endif
      drzm1(i) = 1.0d0 / (rf(i+1)-rf(i))
   enddo
 
-! Set up sigma dot, due to winds and infall
+! (TODO) Set up sigma dot, due to winds and infall
 
   !call set_wind
-
-  call set_accrete
+ ! call set_accrete
 
   ! Set up surface density - iterates towards correct initial disk mass
 

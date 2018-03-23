@@ -1,6 +1,8 @@
 # Module contains dictionaries etc to help with plotting routines
 
 import numpy as np
+import matplotlib.pyplot as plt
+import filefinder as ff
 from multigraph import multigraph, multigraph_legend,multigraph_legend_points
 
 nprofcol = 11
@@ -67,10 +69,6 @@ for i in range(nlogcol):
 
 
 
-
-
-
-
 def read_profile(profilefile):
     '''Reads profile data from file'''
 
@@ -124,6 +122,56 @@ def read_planets(planetfile):
 
 def read_log(logfile):
     return np.genfromtxt(logfile)
+
+
+def plot_profile_multifiles_variable(prefix):
+
+    filenames = ff.find_sorted_local_input_fileset(prefix+"*profile*")
+
+    nfiles = len(filenames)
+
+    print 'Now select variable to plot: here are the choices'
+
+    for i in range(len(profilekeys)):
+        print str(i+1)+': '+profilekeys[i]
+
+    var = input('Which variable to plot?')
+
+    var = var-1
+
+    initial = input('Starting filenumber? ')
+    final = input('Final filenumber? ')
+
+    if(final>nfiles):
+        print "Limiting count to available files"
+        final = nfiles
+
+    fig1 = plt.figure()
+    ax = fig1.add_subplot(111)
+
+    for i in range(initial,final):
+        
+        time,profdata = read_profile(filenames[i])
+
+        if(profileylog[var]):
+            ax.set_xscale('log')
+            ax.set_yscale('log')
+        if(profileymin[var]!=profileymax[var]):
+            ax.set_ylim(profileymin[var],profileymax[var])
+
+        line1 = ax.plot(profdata[:,0],profdata[:,var])
+        ax.set_xlabel(profilexlabel)
+        ax.set_ylabel(profilelabels[var])
+        ax.text(0.9, 0.9,'t = '+str(np.round(time,2))+' yr',
+                bbox=dict(edgecolor='black',facecolor='none'), horizontalalignment='center',
+                verticalalignment='center',transform = ax.transAxes)
+
+        outputfile =profilekeys[var]+'_'+filenames[i]+'.png'
+
+        print 'Saving to ',outputfile
+        plt.savefig(outputfile, format='png')
+        ax.clear()
+
 
 
 def plot_profile_data(profilefile):

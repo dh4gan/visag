@@ -22,7 +22,7 @@ subroutine write_dump
 103 format (A,1PE15.5)
 104 format (4(1PE15.5))
 110 format(10(1PE15.5))
-111 format (11PE15.5)
+111 format (11(1PE15.5))
 
 
   ! Calculate disc properties and spectrum
@@ -106,7 +106,7 @@ mdot_grav = mdot_grav*yr/solarmass
 mdot_mag = mdot_mag*yr/solarmass
 
 ! Write out snapshot data (disk mass, sigma, total luminosity)
-write(itime,110) t/yr, mdisk, tot_lumin, sig_max,mgrav,mmag,grav_max,mag_max,mdot_grav,mdot_mag
+write(itime,111) t/yr, dt/yr, mdisk, tot_lumin, sig_max,mgrav,mmag,grav_max,mag_max,mdot_grav,mdot_mag
 call flush(itime)
  
   return

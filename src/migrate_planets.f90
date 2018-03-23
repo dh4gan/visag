@@ -35,5 +35,4 @@ do iplanet=1,nplanet
 
 enddo
 
-
 end subroutine migrate_planets

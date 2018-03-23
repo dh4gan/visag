@@ -61,6 +61,8 @@ do iplanet =1,nplanet
     fII(iplanet,i) = exp(1.0-Pcrit)
     if(fII(iplanet,i) < 1.0) fII(iplanet,i)=1.0
 
+    fII(iplanet,i) = 1.0 ! DEBUG LINE - REMOVE!
+
     !********************************************************
     ! Compute the total effective planet torque at this radius
     !*********************************************************

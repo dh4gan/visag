@@ -46,8 +46,6 @@ else:
     time,profdata = io.plot_profile_data(profilefile)
 
 
-
-
 if use_layer:
     ###############################
     # Generate layer plots
@@ -94,38 +92,3 @@ if use_layer:
     # Now generate layer plots
 
     multigraph_legend(layerdata,nlayercol,xlabel,ylabels,setylog,ymin,ymax,outputstring,legendstring)
-
-###################################
-# Plot log data
-####################################
-
-
-outputstring = ['t', 'dt','mgrav','mmag','mdisc','grav_max','mag_max','sig_max','tot_lum','mdot_grav', 'mdot_mag']
-
-for i in range(len(outputstring)):
-    outputstring[i] = prefix+outputstring[i]
-
-# Plot labels
-ylabels = [r't (yr)',r'dt (yr)',r'$M_{grav}$ ($M_{\odot}$)',r'$M_{MRI}$ ($M_{\odot}$)',r'$M_{disc}$ ($M_{\odot}$)',
-           r' $\Sigma_{grav,max}$ (g cm$^{-2}$)',r' $\Sigma_{MRI,max}$ (g cm$^{-2}$)',r' $\Sigma_{max}$ (g cm$^{-2}$)',
-           r'$L_{tot}$ ($L_{\odot}$)', r'$\dot{M}_{grav}$ ($M_{\odot} yr^{-1}$)', r'$\dot{M}_{mag}$ $(M_{\odot} yr^{-1}$)']
-
-xlabel = ylabels[0]
-
-# Log the y axis? True/False
-setylog=[False, False, False,True,True,True,True,True,True,True,True]
-
-# y limits - set defaults first
-ymin=[]
-ymax=[]
-for i in range(nlogcol):
-    ymin.append(0.0)
-    ymax.append(0.0)
-
-# Set any non-default limits
-    
-multigraph(logdata,nlogcol,xlabel,ylabels,setylog,ymin,ymax,outputstring)   
-
-
-
-print 'Plotting complete for file ',logfile

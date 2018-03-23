@@ -7,6 +7,9 @@ nprofcol = 11
 nlayercol = 11
 nlogcol = 11
 
+
+# Variables for profile file
+
 profilekeys = ['r','sigma','cs','kappa','gamma','mu', 'T', 'tau', 'nu','alpha', 'Q']
 
 profilelabels = [r'r (AU)',r'$\Sigma$ (g cm $^{-2}$)',r' $c_s$ (cm s$^{-1}$)',r'$\kappa$ (cm$^{2}$ g$^{-1}$)',
@@ -38,7 +41,34 @@ profileymax[9] = 1.0e0
 profileymin[10] = 1.0e0
 profileymax[10] = 1.0e2
 
-# Now generate plots
+
+# Variables for log data
+
+logkeys = ['t', 'dt','mdisc', 'tot_lumin', 'sig_max', 'mgrav', 'mmag', 'grav_max', 'mag_max', 'mdot_grav', 'mdot_mag' ]
+
+
+loglabels = [r't (yr)', r'dt (yr)', r'$M_{disc}$ ($M_{\odot}$)',
+             r'$L_{tot}$ ($L_{\odot}$)',r' $\Sigma_{grav,max}$ (g cm$^{-2}$)',
+             r'$M_{grav}$ ($M_{\odot}$)',r'$M_{MRI}$ ($M_{\odot}$)',
+             r' $\Sigma_{grav,max}$ (g cm$^{-2}$)', r' $\Sigma_{MRI,max}$ (g cm$^{-2}$)',
+             r'$\dot{M}_{grav}$ ($M_{\odot} yr^{-1}$)', r'$\dot{M}_{mag}$ $(M_{\odot} yr^{-1}$)']
+
+logxlabel = loglabels[0]
+
+# Log the y axis? True/False
+logylog=[False, False, False,True,True,True,True,True,True,True,True]
+
+# y limits - set defaults first
+logymin=[]
+logymax=[]
+for i in range(nlogcol):
+    logymin.append(0.0)
+    logymax.append(0.0)
+
+
+
+
+
 
 
 def read_profile(profilefile):
@@ -90,6 +120,10 @@ def read_planets(planetfile):
         print active[i],mp[i],ap[i]
 
     return nplanet,nactive, active,mp,ap
+
+
+def read_log(logfile):
+    return np.genfromtxt(logfile)
 
 
 def plot_profile_data(profilefile):
@@ -150,6 +184,19 @@ def plot_profile_data_planets(profilefile,planetfile):
     multigraph_legend_points(profdata,nprofcol,profilexlabel,profilelabels,profileylog,profileymin,profileymax,profileoutputstring,legendstring,ap,ypoints,mp)
 
     return time,profdata,nplanet,nactive,active,mp,ap
+
+
+def plot_log_data(logfile):
+
+    logdata = read_log(logfile)
+    
+    logoutputstring = []
+    for i in range(nprofcol):
+        logoutputstring.append(logkeys[i]+'_'+logfile)
+
+    multigraph(logdata,nlogcol,logxlabel,loglabels,logylog,logymin,logymax,logoutputstring)
+
+    return logdata
 
 
 

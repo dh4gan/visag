@@ -53,7 +53,7 @@ def read_profile(profilefile):
     ngrid = int(arr[1])
     
     print 'Reading file ',profilefile
-    print 'Time: 'str(time)+ ' yr'
+    print 'Time: '+str(time)+ ' yr'
     
     profdata = np.genfromtxt(profilefile,skip_header=1)
     profdata.reshape(profdata.size/nprofcol,nprofcol)
@@ -64,13 +64,13 @@ def read_profile(profilefile):
 def read_planets(planetfile):
     '''Reads planetary data from file'''
 
-    f = open(planetsfile, 'r')
+    f = open(planetfile, 'r')
     line = f.readline()
-    arr = np.fromstring(line.strip(), dtype=int, sep=" ")
+    arr = np.fromstring(line.strip(), dtype=float, sep=" ")
     
     time = arr[0]
-    nplanet = arr[1]
-    nactive = arr[2]
+    nplanet = int(arr[1])
+    nactive = int(arr[2])
     
     print 'Number of planets: ',nplanet
     print 'Those of which are active: ',nactive
@@ -86,6 +86,8 @@ def read_planets(planetfile):
         active[i] = arr[0]
         mp[i] = arr[1]
         ap[i] = arr[2]
+    
+        print active[i],mp[i],ap[i]
 
     return nplanet,nactive, active,mp,ap
 
@@ -138,11 +140,13 @@ def plot_profile_data_planets(profilefile,planetfile):
     ypoints = np.zeros(nprofcol)
         
     for i in range(nprofcol):
-        if ymin[i]!=ymax[i]:
-            ypoints[i] = 2.0*ymin[i]
+        if profileymin[i]!=profileymax[i]:
+            ypoints[i] = 2.0*profileymin[i]
         else:
             ypoints[i] = 2.0*np.min(profdata[:,i])
 
+
+    print ap, ypoints
     multigraph_legend_points(profdata,nprofcol,profilexlabel,profilelabels,profileylog,profileymin,profileymax,profileoutputstring,legendstring,ap,ypoints,mp)
 
     return time,profdata,nplanet,nactive,active,mp,ap

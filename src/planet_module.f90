@@ -9,7 +9,7 @@ character(100) :: planetfile
 character(1) :: planetchoice
 
   ! Arrays
-  integer, allocatable,dimension(:)  :: alive_flag
+  integer, allocatable,dimension(:)  :: alive
   real, allocatable, dimension(:)  :: mp,ap, total_planet_torque, adot,tmig,tmigI
 real, allocatable,dimension(:,:) :: lambdaI, lambdaII,fII
 real, allocatable, dimension(:,:) :: torquei

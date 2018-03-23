@@ -18,11 +18,11 @@ subroutine write_dump
   integer :: i,ifirst, iplanet
 
   write (*,103) 'Output at time t = ',t/yr
-102 format (10E15.5)
+102 format (11(1PE15.5))
 103 format (A,1PE15.5)
-104 format (4E15.5)
-110 format(10E15.5)
-111 format (11E15.5)
+104 format (4(1PE15.5))
+110 format(10(1PE15.5))
+111 format (11PE15.5)
 
 
   ! Calculate disc properties and spectrum
@@ -30,15 +30,15 @@ subroutine write_dump
   call disc_properties
   call luminosity(tot_lumin,spectrum,Tc,tau)
 
-   write(fileno, snapshotformat)snapshotcounter
+  write(fileno, snapshotformat)snapshotcounter
 
-    fileno = TRIM(fileno)
+  fileno = TRIM(fileno)
 ! write out disc profiles
   OPEN(iprof, file=TRIM(prefix)//'_profile.'//fileno, status='unknown')
-  write(iprof,*) nrgrid
+  write(iprof,*) t/yr, nrgrid
   do i = isr, ier
      write (iprof,102) rz(i)/AU,sigma(i), cs(i), kappa(i), gamma(i),mu(i),Tc(i), &
-    tau(i), alpha_g(i),Q(i)
+    tau(i), nu_tc(i), alpha_g(i),Q(i)
   enddo
 
   close(iprof)
@@ -53,7 +53,7 @@ subroutine write_dump
 
 if (layerchoice=='y') then
 OPEN(iprof,file=TRIM(prefix)//'layer.'//fileno,status='unknown')
-WRITE(iprof,*) nrgrid
+WRITE(iprof,*) t/yr,nrgrid
 do i=isr,ier
 write(iprof,111) rz(i)/AU, sigma(i), sigma_m(i), sigma_tot(i), cs_m(i),&
     kappa_m(i),gamma_m(i), mu_m(i),tau_m(i),nu_m(i),alpha_m
@@ -64,10 +64,10 @@ endif
 
 if(planetchoice=='y') then
 open(iprof, file=TRIM(prefix)//'_planets.'//fileno,status='unknown')
-write(iprof,*)nplanet
+write(iprof,*)t/yr,nplanet,nactive
 do iplanet=1,nplanet
 
-    write(iprof,*) mp(iplanet), ap(iplanet)
+    write(iprof,*) alive(iplanet),mp(iplanet)/mjup, ap(iplanet)/AU
 enddo
 close(iprof)
 endif

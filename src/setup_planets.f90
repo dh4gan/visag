@@ -23,12 +23,14 @@ read(10,*) nplanet
 print*, 'There are ',nplanet, 'planets'
 nactive = nplanet
 
-allocate(mp(nplanet),ap(nplanet))
+allocate(mp(nplanet),ap(nplanet),alive(nplanet))
 allocate(lambdaI(nplanet,nmax), lambdaII(nplanet,nmax))
 allocate(fII(nplanet,nmax))
 allocate(adot(nplanet),tmig(nplanet),tmigI(nplanet))
 allocate(torquei(nplanet,nmax), total_planet_torque(nmax))
 
+
+alive(:) = 1
 mp(:) = 0.0
 ap(:) = 0.0
 lambdaII(:,:) = 0.0
@@ -46,5 +48,6 @@ enddo
 
 ! Convert to correct units
 mp(:) = mp(:)*mjup
+ap(:) = ap(:)*AU
 
 end subroutine setup_planets

@@ -130,7 +130,7 @@ def multigraph_legend_points(data,nplots,xlabel,ylabels,setylog,ymin,ymax,output
         
         yplot = np.zeros(len(xpoints))
         yplot[:] = ypoints[i]            
-        ax.scatter(xpoints,yplot,s=100*sizepoints,facecolor='red')
+        ax.scatter(xpoints,yplot,s=10*sizepoints,facecolor='red')
                             
         ax.legend()
         outputfile = outputstring[i]+'.png'

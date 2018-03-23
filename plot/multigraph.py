@@ -38,8 +38,8 @@ def multigraph(data,nplots,xlabel, ylabels,setylog,ymin,ymax,outputstring):
             ax.set_ylim(ymin[i],ymax[i])
     
         ax.plot(data[:,0],data[:,i])
-        outputfile = outputstring[i]+'.ps'    
-        plt.savefig(outputfile, format='ps')
+        outputfile = outputstring[i]+'.png'
+        plt.savefig(outputfile, format='png')
 
     # Finish profile plots
     print 'Multigraph call complete'
@@ -81,8 +81,8 @@ def multigraph_legend(data,nplots,xlabel, ylabels,setylog,ymin,ymax,outputstring
     
         ax.plot(data[:,0],data[:,i], label=legendstring[i])
         ax.legend()
-        outputfile = outputstring[i]+'.ps'    
-        plt.savefig(outputfile, format='ps')
+        outputfile = outputstring[i]+'.png'
+        plt.savefig(outputfile, format='png')
 
     # Finish profile plots
     print 'Multigraph_legend call complete'
@@ -133,8 +133,8 @@ def multigraph_legend_points(data,nplots,xlabel,ylabels,setylog,ymin,ymax,output
         ax.scatter(xpoints,yplot,s=100*sizepoints,facecolor='red')
                             
         ax.legend()
-        outputfile = outputstring[i]+'.ps'    
-        plt.savefig(outputfile, format='ps')
+        outputfile = outputstring[i]+'.png'
+        plt.savefig(outputfile, format='png')
 
     # Finish profile plots
     print 'Multigraph_legend_with_points call complete'

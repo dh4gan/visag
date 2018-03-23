@@ -15,11 +15,11 @@ subroutine write_dump
 
   real(kind=8) :: sig_max,mdisk, tot_lumin,tcoolmin
   real :: mdot_grav, mdot_mag, grav_max,mag_max, mmag,mgrav
-  integer :: i,ifirst	
+  integer :: i,ifirst, iplanet
 
   write (*,103) 'Output at time t = ',t/yr
 102 format (10E15.5)
-103 format (A,E15.5)
+103 format (A,1PE15.5)
 104 format (4E15.5)
 110 format(10E15.5)
 111 format (11E15.5)
@@ -60,6 +60,18 @@ write(iprof,111) rz(i)/AU, sigma(i), sigma_m(i), sigma_tot(i), cs_m(i),&
 enddo
 close(iprof)
 endif
+
+
+if(planetchoice=='y') then
+open(iprof, file=TRIM(prefix)//'_planets.'//fileno,status='unknown')
+write(iprof,*)nplanet
+do iplanet=1,nplanet
+
+    write(iprof,*) mp(iplanet), ap(iplanet)
+enddo
+close(iprof)
+endif
+
 
 ! Compute disk mass and maximum surface density
 ! Also compute radially averaged accretion rates

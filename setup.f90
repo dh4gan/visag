@@ -101,7 +101,7 @@ endif
   write (*,101) ' - inner cut = ',rremove, ' AU'
   write(*,*) "-----------------------------------------------"
 100 format (A,I5)
-101 format (A,E14.3,A)
+101 format (A,1PE14.3,A)
 
 
   ! Predicted number of files, and resulting format

@@ -35,6 +35,8 @@ subroutine setup
   read(10,*) prefix  ! File output prefix
   read(10,'(a1)') runmode ! f = fixed alpha, g=self-gravitating, Q = self-gravitating, fixed Q
   read(10,'(a1)') layerchoice ! Run this with an MRI upper layer? (y/n)
+  read(10,'(a1)') planetchoice ! Add planets? (y/n)
+  read(10,*) planetfile ! File containing planet data
   read(10,*) alpha_visc ! If fixed alpha viscosity, define it here
   read(10,'(a)') tempchoice ! Background Temperature: f=fixed, s=stellar
   read(10,*) T_background ! If fixed background temperature, define it here
@@ -336,6 +338,12 @@ endif
 
   print*, 'Calculating other disc properties'
   call disc_properties
+
+
+  if(planetchoice=='y') then
+    print*, 'Setting up planets'
+    call setup_planets
+endif
   write (*,*) '--- setup completed'
 
 

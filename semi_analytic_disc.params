@@ -1,6 +1,8 @@
 test	- file prefix
 f	- Run mode (f=fixed alpha, g=self-gravitating, Q=fixed Toomre Q)
 n	- Add an MRI-active layer?
+y	- Add planets?
+planets.dat - Planet data file
 0.01   	- Alpha (for fixed alpha runs)
 f   	- Background temperature: (f=fixed T, s=stellar ,Ida and Lin prescription)
 10.0    - Minimum background temperature value

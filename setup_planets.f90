@@ -1,12 +1,17 @@
-subroutine setup_planets(planetfile)
+subroutine setup_planets
 !
 ! Subroutine sets up planets to be added to disc
 ! Planet data read from separate input file
 !
 !
 
+use gravdata
 use planetdata
-character(100), intent(in) :: planetfile
+use unitdata
+
+implicit none
+
+integer :: iplanet
 
 ! Open planet file
 
@@ -15,12 +20,14 @@ open(10, file=planetfile,status='old')
 
 read(10,*) nplanet
 
+print*, 'There are ',nplanet, 'planets'
 nactive = nplanet
 
 allocate(mp(nplanet),ap(nplanet))
 allocate(lambdaI(nplanet,nmax), lambdaII(nplanet,nmax))
 allocate(fII(nplanet,nmax))
 allocate(adot(nplanet),tmig(nplanet),tmigI(nplanet))
+allocate(torquei(nplanet,nmax), total_planet_torque(nmax))
 
 mp(:) = 0.0
 ap(:) = 0.0
@@ -30,11 +37,14 @@ fII(:,:) = 0.0
 adot(:) = 0.0
 tmig(:) = 0.0
 tmigI(:) = 0.0
+torquei(:,:) = 0.0
+total_planet_torque(:) = 0.0
 
 do iplanet=1,nplanet
 read(10,*) mp(iplanet), ap(iplanet)
 enddo
 
-
+! Convert to correct units
+mp(:) = mp(:)*mjup
 
 end subroutine setup_planets

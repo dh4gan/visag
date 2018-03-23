@@ -5,7 +5,8 @@ module planetdata
   integer :: nplanet, nactive
   
   real(kind=8) :: rremove, p_create
-
+character(100) :: planetfile
+character(1) :: planetchoice
 
   ! Arrays
   integer, allocatable,dimension(:)  :: alive_flag

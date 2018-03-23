@@ -57,9 +57,11 @@ subroutine evolve
 
   heatfunc(:) = 9.0*nu_tc(:)*sigma(:)*omegaK(:)*omegaK(:)/8.0
 
-
+  if(planetchoice=='y') then
   ! Compute torques induced on the disc by planets
+  
   call compute_planet_torques
+    endif
 
   ! Evolve the surface density with the diffusive term
 
@@ -74,7 +76,7 @@ subroutine evolve
      term2=rf1_2(i)*(nu_tc(i)*sigma(i)*rz1_2(i)-nu_tc(i-1)*sigma(i-1)*rz1_2(i-1))*drfm1(i)
 
     torqueterm = 0.0
-    if(nplanet>0) then
+    if(planetchoice=='y') then
     torqueterm = total_planet_torque(i+1)- 2.0*total_planet_torque(i) - total_planet_torque(i)
     endif
 
@@ -101,8 +103,10 @@ subroutine evolve
   !$OMP END PARALLEL
 
 
+   if(planetchoice=='y') then
     ! Move planets
     call migrate_planets
+endif
 
   return
 end subroutine evolve

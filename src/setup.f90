@@ -271,11 +271,11 @@ endif
      drzm1(i) = 1.0d0 / (rf(i+1)-rf(i))
   enddo
 
-! Set up sigma dot, due to winds and infall
+! (TODO) Set up sigma dot, due to winds and infall
 
   !call set_wind
 
-  call set_accrete
+  !call set_accrete
 
   ! Set up surface density - iterates towards correct initial disk mass
 

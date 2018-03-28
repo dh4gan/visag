@@ -10,7 +10,8 @@ character(1) :: planetchoice
 
   ! Arrays
   integer, allocatable,dimension(:)  :: alive
-  real, allocatable, dimension(:)  :: mp,ap, total_planet_torque, adot,tmig,tmigI
+  real, allocatable, dimension(:)  :: mp,ap, total_planet_torque, torque_term
+  real, allocatable, dimension(:) :: adot,tmig,tmigI
 real, allocatable,dimension(:,:) :: lambdaI, lambdaII,fII
 real, allocatable, dimension(:,:) :: torquei
 

@@ -27,7 +27,7 @@ allocate(mp(nplanet),ap(nplanet),alive(nplanet))
 allocate(lambdaI(nplanet,nmax), lambdaII(nplanet,nmax))
 allocate(fII(nplanet,nmax))
 allocate(adot(nplanet),tmig(nplanet),tmigI(nplanet))
-allocate(torquei(nplanet,nmax), total_planet_torque(nmax))
+allocate(torquei(nplanet,nmax), torque_term(nmax), total_planet_torque(nmax))
 
 
 alive(:) = 1

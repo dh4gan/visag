@@ -22,6 +22,8 @@ do iplanet =1,nplanet
     mratio = mp(iplanet)/Mstar
     rhill = ap(iplanet)*(mratio/3.0)**0.333
 
+    
+
     do i = isr,ier
 
     !*****************************************************
@@ -29,17 +31,20 @@ do iplanet =1,nplanet
     !*****************************************************
 
     deltap = abs(rz(i)-ap(iplanet))
-    H = cs(i)/omegaK(i)
+    H = cs(i)/omegaK(i)        
+
 
     if(H>deltap) deltap =H
 
-    lambdaII(iplanet,i) = 0.5*mratio*mratio/(deltap**4)
-
+    if(rhill>deltap) deltap=rhill
+    
+    lambdaII(iplanet,i) = 0.5*mratio*mratio/deltap**4
     if(rz(i) < ap(iplanet)) then
         lambdaII(iplanet,i) = lambdaII(iplanet,i)*rz(i)**4
     else
         lambdaII(iplanet,i) = lambdaII(iplanet,i)*ap(iplanet)**4
     endif
+
 
     !*************************************
     ! Compute the Type I specific torque
@@ -69,6 +74,13 @@ do iplanet =1,nplanet
 
     torquei(iplanet,i) = lambdaI(iplanet,i)*(1.0-fII(iplanet,i)) + lambdaII(iplanet,i)*fII(iplanet,i)
 
+!    if(sigma(i)<1.0e1) then
+!       print*, 'GAP: ',rz(i)/AU,deltap/AU, H/AU,lambdaII(1,i)
+!    endif
+
+
+    !if(i==10) print*, 'TORQUE', i,lambdaII(1,i), H/AU, rz(i)/AU, ap(iplanet)/AU,deltap/AU
+
     enddo
 
 
@@ -76,7 +88,10 @@ do iplanet =1,nplanet
 
 total_planet_torque(:) = total_planet_torque(:) + torquei(iplanet,:)
 
+torque_term(:) = 2.0*omegaK(:)*rz(:)*rz(:)*sigma(:)*total_planet_torque(:)
+
 enddo
+
 
 
 end subroutine compute_planet_torques

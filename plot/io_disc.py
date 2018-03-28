@@ -126,10 +126,9 @@ def read_log(logfile):
     return np.genfromtxt(logfile)
 
 
-def plot_profile_multifiles_variable(prefix):
+def plot_profile_multifiles_variable(prefix, add_planets=False):
 
     filenames = ff.find_sorted_local_input_fileset(prefix+"*profile*")
-
     nfiles = len(filenames)
 
     print 'Now select variable to plot: here are the choices'
@@ -151,9 +150,24 @@ def plot_profile_multifiles_variable(prefix):
     fig1 = plt.figure()
     ax = fig1.add_subplot(111)
 
+    if(add_planets):
+        planetfiles = ff.find_sorted_local_input_fileset(prefix+"*planets*")
+
     for i in range(initial,final):
         
         time,profdata = read_profile(filenames[i])
+        
+        if(add_planets):
+            t,nplanet,nactive, active,mp,ap = read_planets(planetfiles[i],verbose=False)
+
+            # Setup planet points for plotting
+            xpoints = np.zeros(nplanet)
+            ypoints = np.zeros(nplanet)
+        
+            if profileymin[var]!=profileymax[var]:
+                ypoints[:] = 2.0*profileymin[var]
+            else:
+                ypoints[:] = 2.0*np.min(profdata[:,var])
 
         if(profileylog[var]):
             ax.set_xscale('log')
@@ -167,6 +181,9 @@ def plot_profile_multifiles_variable(prefix):
         ax.text(0.9, 0.9,'t = '+str(np.round(time,2))+' yr',
                 bbox=dict(edgecolor='black',facecolor='none'), horizontalalignment='center',
                 verticalalignment='center',transform = ax.transAxes)
+
+        if(add_planets):
+            ax.scatter(ap,ypoints,s=10*mp,facecolor='red')
 
         outputfile =profilekeys[var]+'_'+filenames[i]+'.png'
 

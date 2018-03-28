@@ -287,6 +287,6 @@ def obtain_planet_tracks(prefix):
         mp_all[:,i] = mp[:]
         ap_all[:,i] = ap[:]
 
-    return time_all, active_all,ap_all, mp_all
+    return time_all, nplanet,active_all,ap_all, mp_all
 
         

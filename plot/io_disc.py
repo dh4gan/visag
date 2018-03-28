@@ -240,14 +240,14 @@ def plot_profile_data_planets(profilefile,planetfile):
         legendstring.append('Time = '+str(time)+' yr')
 
     # Setup planet points for plotting
-    xpoints = np.zeros(nprofcol)
-    ypoints = np.zeros(nprofcol)
+    xpoints = np.zeros((nplanet,nprofcol))
+    ypoints = np.zeros((nplanet,nprofcol))
         
     for i in range(nprofcol):
         if profileymin[i]!=profileymax[i]:
-            ypoints[i] = 2.0*profileymin[i]
+            ypoints[:,i] = 2.0*profileymin[i]
         else:
-            ypoints[i] = 2.0*np.min(profdata[:,i])
+            ypoints[:,i] = 2.0*np.min(profdata[:,i])
 
 
     print ap, ypoints

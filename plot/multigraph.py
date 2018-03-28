@@ -129,7 +129,7 @@ def multigraph_legend_points(data,nplots,xlabel,ylabels,setylog,ymin,ymax,output
         ax.plot(data[:,0],data[:,i], label=legendstring[i])
         
         yplot = np.zeros(len(xpoints))
-        yplot[:] = ypoints[i]            
+        yplot[:] = ypoints[:,i]            
         ax.scatter(xpoints,yplot,s=10*sizepoints,facecolor='red')
                             
         ax.legend()

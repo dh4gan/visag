@@ -89,7 +89,7 @@ def read_profile(profilefile):
     return time, profdata
 
 
-def read_planets(planetfile):
+def read_planets(planetfile,verbose=True):
     '''Reads planetary data from file'''
 
     f = open(planetfile, 'r')
@@ -100,8 +100,9 @@ def read_planets(planetfile):
     nplanet = int(arr[1])
     nactive = int(arr[2])
     
-    print 'Number of planets: ',nplanet
-    print 'Those of which are active: ',nactive
+    if(verbose):
+        print 'Number of planets: ',nplanet
+        print 'Those of which are active: ',nactive
     
     active = np.zeros(nplanet)
     mp = np.zeros(nplanet)
@@ -115,9 +116,10 @@ def read_planets(planetfile):
         mp[i] = arr[1]
         ap[i] = arr[2]
     
-        print active[i],mp[i],ap[i]
+        if(verbose):
+            print active[i],mp[i],ap[i]
 
-    return nplanet,nactive, active,mp,ap
+    return time,nplanet,nactive, active,mp,ap
 
 
 def read_log(logfile):
@@ -201,7 +203,10 @@ def plot_profile_data_planets(profilefile,planetfile):
     
     time,profdata = read_profile(profilefile)
     
-    nplanet,nactive,active,mp,ap = read_planets(planetfile)
+    t,nplanet,nactive,active,mp,ap = read_planets(planetfile)
+
+    if(np.abs(time-t)>1.0e-30):
+        print "Warning: times of profile/planet files don't match"
     
     # Set up plot data for multigraph function
     
@@ -247,4 +252,24 @@ def plot_log_data(logfile):
     return logdata
 
 
+def obtain_planet_tracks(prefix):
 
+    planetfiles = ff.find_sorted_local_input_fileset(prefix+"*planets*")
+
+    time,nplanet,nactive,active,mp,ap = read_planets(planetfiles[0])
+
+    time_all = np.zeros(len(planetfiles))
+    active_all = np.zeros((nplanet,len(planetfiles)))
+    ap_all = np.zeros((nplanet,len(planetfiles)))
+    mp_all = np.zeros((nplanet,len(planetfiles)))
+    
+    for i in range(len(planetfiles)):
+        
+        time_all[i],nplanet,nactive,active, mp,ap = read_planets(planetfiles[i],verbose=False)
+        active_all[:,i] = active[:]
+        mp_all[:,i] = mp[:]
+        ap_all[:,i] = ap[:]
+
+    return time_all, active_all,ap_all, mp_all
+
+        

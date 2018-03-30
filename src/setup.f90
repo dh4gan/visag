@@ -35,6 +35,8 @@ subroutine setup
   read(10,*) prefix  ! File output prefix
   read(10,'(a1)') runmode ! f = fixed alpha, g=self-gravitating, Q = self-gravitating, fixed Q
   read(10,'(a1)') layerchoice ! Run this with an MRI upper layer? (y/n)
+  read(10,'(a1)') planetchoice ! Add planets? (y/n)
+  read(10,*) planetfile ! File containing planet data
   read(10,*) alpha_visc ! If fixed alpha viscosity, define it here
   read(10,'(a)') tempchoice ! Background Temperature: f=fixed, s=stellar
   read(10,*) T_background ! If fixed background temperature, define it here
@@ -99,7 +101,7 @@ endif
   write (*,101) ' - inner cut = ',rremove, ' AU'
   write(*,*) "-----------------------------------------------"
 100 format (A,I5)
-101 format (A,E14.3,A)
+101 format (A,1PE14.3,A)
 
 
   ! Predicted number of files, and resulting format
@@ -228,8 +230,7 @@ fullmri(:) = 0.0
      rf1_2(i) = sqrt(rf(i))
      rz1_2(i) = sqrt(rz(i))
 
-! Calculate initial temperatures as well
-     Tc(i) = T_1AU*(rz(i)/AU)**(-p_T)
+    
 
   enddo
 
@@ -269,7 +270,7 @@ endif
 ! (TODO) Set up sigma dot, due to winds and infall
 
   !call set_wind
- ! call set_accrete
+  !call set_accrete
 
   ! Set up surface density - iterates towards correct initial disk mass
 
@@ -328,10 +329,26 @@ endif
   sigma(isr-1) = 0.0d0
   sigma(ier+1) = 0.0d0  
 
+
+  ! Set up temperature profile (if not running in fixed Q mode)
+
+  if(runmode=='f' .or.runmode=='g') then
+     do i=isr,ier     
+        ! Calculate initial temperatures as well
+        Tc(i) = T_1AU*(rz(i)/AU)**(-p_T)
+     enddo
+  endif
+        
   ! Calculate disc properties for this setup
 
   print*, 'Calculating other disc properties'
   call disc_properties
+
+
+  if(planetchoice=='y') then
+    print*, 'Setting up planets'
+    call setup_planets
+endif
   write (*,*) '--- setup completed'
 
 

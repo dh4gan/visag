@@ -1,13 +1,15 @@
 test	- file prefix
 f	- Run mode (f=fixed alpha, g=self-gravitating, Q=fixed Toomre Q)
 n	- Add an MRI-active layer?
-0.01   - Alpha (for fixed alpha runs)
-f   - Background temperature: (f=fixed T, s=stellar ,Ida and Lin prescription)
+y	- Add planets?
+planets.dat - Planet data file
+0.01   	- Alpha (for fixed alpha runs)
+f   	- Background temperature: (f=fixed T, s=stellar ,Ida and Lin prescription)
 10.0    - Minimum background temperature value
 1.0e6   - Maximum Runtime (yr)
 1.0e2   - Snapshot Interval (yr)
 100	- number of active r gridpoints
-10     - number of active z gridpoint
+10     	- number of active z gridpoints
 1.0	- mass of star (solar masses)
 0.05 	- initial mass of disk (solar masses)
 1.0 	- Sigma power law index
@@ -22,4 +24,4 @@ f   - Background temperature: (f=fixed T, s=stellar ,Ida and Lin prescription)
 1.0d-8 	- initial accretion rate in solar masses / yr
 10.0	- inner radius for photoevaporation (AU)
 5.0d-9  - initial wind mass loss rate (evaluated to 25AU)
-0.05	move planets straying inside this radius (AU)
+0.05	- move planets straying inside this radius (AU)

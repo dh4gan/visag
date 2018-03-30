@@ -8,9 +8,11 @@ subroutine evolve
   use planetdata
   use unitdata
 
+  implicit none
 
   real(kind=8) :: dtmin,C0,C1,dr2,dr
   real(kind=8) :: tot_lumin,term1,term2
+  real :: dtorque, dTcdr, vr
 
   integer :: i,j,k
   integer :: Lcalc
@@ -57,6 +59,12 @@ subroutine evolve
 
   heatfunc(:) = 9.0*nu_tc(:)*sigma(:)*omegaK(:)*omegaK(:)/8.0
 
+  if(planetchoice=='y') then
+  ! Compute torques induced on the disc by planets
+  
+     call compute_planet_torques
+  endif
+
   ! Evolve the surface density with the diffusive term
 
   !$OMP PARALLEL &
@@ -69,10 +77,16 @@ subroutine evolve
      term1=rf1_2(i+1)*(nu_tc(i+1)*sigma(i+1)*rz1_2(i+1)-nu_tc(i)*sigma(i)*rz1_2(i))*drfm1(i+1)
      term2=rf1_2(i)*(nu_tc(i)*sigma(i)*rz1_2(i)-nu_tc(i-1)*sigma(i-1)*rz1_2(i-1))*drfm1(i)
 
+    dtorque = 0.0
+    if(planetchoice=='y') then
+    dtorque = torque_term(i+1)- 2.0*torque_term(i) - torque_term(i)
+    endif
+
+    !print*, torqueterm/(term1-term2)
      vr = -3.0*term2/(rf(i)*sigma(i))
      dTcdr = (Tc(i+1) -Tc(i))*drzm1(i)
 
-     snew(i) = sigma(i) + 3.0d0*rzm1(i)*drzm1(i)*(term1-term2)*dt +sigdot(i)*dt
+     snew(i) = sigma(i) + 3.0d0*rzm1(i)*drzm1(i)*(term1-term2 +dtorque)*dt +sigdot(i)*dt
      Tnew(i) = Tc(i) + 2.0*dt*(heatfunc(i)-coolfunc(i))/(cp(i)*sigma(i)) -vr*dTcdr*dt
 
   enddo
@@ -91,6 +105,12 @@ subroutine evolve
   enddo
   !$OMP END DO
   !$OMP END PARALLEL
+
+
+   if(planetchoice=='y') then
+    ! Move planets
+    call migrate_planets
+endif
 
   return
 end subroutine evolve

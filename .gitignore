@@ -1,3 +1,5 @@
 *.ps
 *.o
 *.mod
+semi_analytic_disc
+plot/*.pyc

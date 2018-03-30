@@ -15,14 +15,14 @@ subroutine write_dump
 
   real(kind=8) :: sig_max,mdisk, tot_lumin,tcoolmin
   real :: mdot_grav, mdot_mag, grav_max,mag_max, mmag,mgrav
-  integer :: i,ifirst	
+  integer :: i,ifirst, iplanet
 
   write (*,103) 'Output at time t = ',t/yr
-102 format (10E15.5)
-103 format (A,E15.5)
-104 format (4E15.5)
-110 format(10E15.5)
-111 format (11E15.5)
+102 format (11(1PE15.5))
+103 format (A,1PE15.5)
+104 format (4(1PE15.5))
+110 format(10(1PE15.5))
+111 format (11(1PE15.5))
 
 
   ! Calculate disc properties and spectrum
@@ -30,15 +30,15 @@ subroutine write_dump
   call disc_properties
   call luminosity(tot_lumin,spectrum,Tc,tau)
 
-   write(fileno, snapshotformat)snapshotcounter
+  write(fileno, snapshotformat)snapshotcounter
 
-    fileno = TRIM(fileno)
+  fileno = TRIM(fileno)
 ! write out disc profiles
   OPEN(iprof, file=TRIM(prefix)//'_profile.'//fileno, status='unknown')
-  write(iprof,*) nrgrid
+  write(iprof,*) t/yr, nrgrid
   do i = isr, ier
      write (iprof,102) rz(i)/AU,sigma(i), cs(i), kappa(i), gamma(i),mu(i),Tc(i), &
-    tau(i), alpha_g(i),Q(i)
+    tau(i), nu_tc(i), alpha_g(i),Q(i)
   enddo
 
   close(iprof)
@@ -53,13 +53,25 @@ subroutine write_dump
 
 if (layerchoice=='y') then
 OPEN(iprof,file=TRIM(prefix)//'layer.'//fileno,status='unknown')
-WRITE(iprof,*) nrgrid
+WRITE(iprof,*) t/yr,nrgrid
 do i=isr,ier
 write(iprof,111) rz(i)/AU, sigma(i), sigma_m(i), sigma_tot(i), cs_m(i),&
     kappa_m(i),gamma_m(i), mu_m(i),tau_m(i),nu_m(i),alpha_m
 enddo
 close(iprof)
 endif
+
+
+if(planetchoice=='y') then
+open(iprof, file=TRIM(prefix)//'_planets.'//fileno,status='unknown')
+write(iprof,*)t/yr,nplanet,nactive
+do iplanet=1,nplanet
+
+    write(iprof,*) alive(iplanet),mp(iplanet)/mjup, ap(iplanet)/AU
+enddo
+close(iprof)
+endif
+
 
 ! Compute disk mass and maximum surface density
 ! Also compute radially averaged accretion rates
@@ -94,7 +106,7 @@ mdot_grav = mdot_grav*yr/solarmass
 mdot_mag = mdot_mag*yr/solarmass
 
 ! Write out snapshot data (disk mass, sigma, total luminosity)
-write(itime,110) t/yr, mdisk, tot_lumin, sig_max,mgrav,mmag,grav_max,mag_max,mdot_grav,mdot_mag
+write(itime,111) t/yr, dt/yr, mdisk, tot_lumin, sig_max,mgrav,mmag,grav_max,mag_max,mdot_grav,mdot_mag
 call flush(itime)
  
   return

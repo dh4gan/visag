@@ -230,8 +230,7 @@ fullmri(:) = 0.0
      rf1_2(i) = sqrt(rf(i))
      rz1_2(i) = sqrt(rz(i))
 
-! Calculate initial temperatures as well
-     Tc(i) = T_1AU*(rz(i)/AU)**(-p_T)
+    
 
   enddo
 
@@ -334,6 +333,16 @@ endif
   sigma(isr-1) = 0.0d0
   sigma(ier+1) = 0.0d0  
 
+
+  ! Set up temperature profile (if not running in fixed Q mode)
+
+  if(runmode=='f' .or.runmode=='g') then
+     do i=isr,ier     
+        ! Calculate initial temperatures as well
+        Tc(i) = T_1AU*(rz(i)/AU)**(-p_T)
+     enddo
+  endif
+        
   ! Calculate disc properties for this setup
 
   print*, 'Calculating other disc properties'

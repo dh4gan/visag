@@ -25,25 +25,30 @@
      omegaK(i) = Sqrt(G*mstar/rz(i)**3.0d0)
 
      Q(i) = Qcrit
-     cs(i) = pi*G*sigma(i)*Qcrit/omegaK(i)
+     cs(i) = pi*G*sigma(i)*Q(i)/omegaK(i)
 
-     cs(i) = sqrt(cs(i))
      H = cs(i)/omegaK(i)
-
+     
      IF(H/=0.0) THEN
         rho = 0.5d0*sigma(i)/H
      ELSE
         rho = 0.0
      ENDIF
-
+    
      !	Interpolate over rho,T to get cs,kappa, mu, gamma
 
      IF(rho>=1.0e-25) THEN
-
+ 
         call eos_cs(rho,cs(i),Tc(i),kappa(i),mu(i),gamma(i),cp(i))
 
+        if(Tc(i)<T_source(i)) then
+           Tc(i) = T_source(i)
+           call eos_T(rho,cs,Tc(i),kappa(i),mu(i),gamma(i),cp(i))
+           Q(i) = cs(i)*omegaK(i)/(pi*G*sigma(i))
+        endif
+        
         ! Now calculate cooling time
-        tau(i) = H*kappa(i)*rho + tauplus(i)
+        tau(i) = kappa(i)*sigma(i) + tauplus(i)
 
         ! Cooling function for disc
         coolfunc(i) = 16.0d0/3.0d0*stefan*(Tc(i)**4.0d0-T_source(i)**4.0d0)
@@ -81,8 +86,9 @@
         
      endif
 
-     nu_tc(i) = alpha_g(i)*cs(i)*cs(i)/omegaK(i)         
 
+     nu_tc(i) = alpha_g(i)*cs(i)*cs(i)/omegaK(i)         
+     print*, rz(i)/AU, alpha_g(i),Q(i)
   enddo
   !$OMP END DO
   !$OMP END PARALLEL

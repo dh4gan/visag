@@ -35,6 +35,7 @@
         rho = 0.0
      ENDIF
     
+    
      !	Interpolate over rho,T to get cs,kappa, mu, gamma
 
      IF(rho>=1.0e-25) THEN
@@ -43,8 +44,9 @@
 
         if(Tc(i)<T_source(i)) then
            Tc(i) = T_source(i)
-           call eos_T(rho,cs,Tc(i),kappa(i),mu(i),gamma(i),cp(i))
+           call eos_T(rho,cs(i),Tc(i),kappa(i),mu(i),gamma(i),cp(i))
            Q(i) = cs(i)*omegaK(i)/(pi*G*sigma(i))
+           H = cs(i)/omegaK(i)
         endif
         
         ! Now calculate cooling time
@@ -87,8 +89,7 @@
      endif
 
 
-     nu_tc(i) = alpha_g(i)*cs(i)*cs(i)/omegaK(i)         
-     print*, rz(i)/AU, alpha_g(i),Q(i)
+     nu_tc(i) = alpha_g(i)*cs(i)*cs(i)/omegaK(i)               
   enddo
   !$OMP END DO
   !$OMP END PARALLEL

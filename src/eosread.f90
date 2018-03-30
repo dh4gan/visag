@@ -61,7 +61,7 @@
 	eostable(i,j,5) = 1.0 + k_B*eostable(i,j,2)/(eostable(i,j,4)*m_H*eostable(i,j,3))
 	 
 !	Now calculate sound speed
-	eostable(i,j,3) = eostable(i,j,5)*(eostable(i,j,5)-1)*eostable(i,j,3)
+	eostable(i,j,3) = sqrt(eostable(i,j,5)*(eostable(i,j,5)-1)*eostable(i,j,3))
 	
 
 	enddo

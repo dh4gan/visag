@@ -1,4 +1,4 @@
-      subroutine eos_cs(rho,cs,T,kappa,mu,gamma,cp)
+      subroutine eos_cs(rho,cs,temp,kappa,mu,gamma,cp)
 !-----------------------------------------------------------------------
 ! Reads and interpolates the equation of state tables to give
 ! temperatures, opacities ***USING sound speed***
@@ -11,8 +11,8 @@
       implicit none
 
       integer :: i,j
-	real :: rho, cs,kappa,mu,gamma, T,cp
-      real :: mT,mT1,mT2,cT,cT1,cT2,T1,T2
+	real, intent(inout) :: rho, cs,kappa,mu,gamma, temp,cp
+      real :: mtemp,mtemp1,mtemp2,ctemp,ctemp1,ctemp2,temp1,temp2
       real :: mmu,mmu1,mmu2,cmu,cmu1,cmu2,mu1,mu2
       real :: mkap,mkap1,mkap2,ckap,ckap1,ckap2,kap1,kap2 
       real :: mgamma,mgamma1,mgamma2,cgamma,cgamma1,cgamma2,gamma1,gamma2      
@@ -27,7 +27,8 @@
             i = i + 1
          enddo
 
-! ... and for sound speed
+! ... and for sound speed         
+
          if (cs < eostable(1,1,3)) cs = 1.01*eostable(1,1,3)
          j = 1
          do 
@@ -37,10 +38,12 @@
 
 !         if(j==1) j=2
 ! Interpolate over the j value at i-1
-         mT1 = (eostable(i-1,j-1,2) - eostable(i-1,j,2))/ &
+         mtemp1 = (eostable(i-1,j-1,2) - eostable(i-1,j,2))/ &
               (eostable(i-1,j-1,3) - eostable(i-1,j,3))
-         cT1 = eostable(i-1,j,2) - mT1*eostable(i-1,j,3)
-         T = mT1*cs + cT1
+         ctemp1 = eostable(i-1,j,2) - mtemp1*eostable(i-1,j,3)
+         temp1 = mtemp1*cs + ctemp1
+
+        ! print*, cs, j, mtemp1,ctemp1,temp1
 
          mmu1 = (eostable(i-1,j-1,4) - eostable(i-1,j,4))/ &
               (eostable(i-1,j-1,3) - eostable(i-1,j,3))
@@ -57,7 +60,7 @@
 	cgamma1 = eostable(i-1,j,5) - mgamma1*eostable(i-1,j,3)
 	gamma1 = mgamma1*cs + cgamma1
 				 
-! Then interpolate over the j value at i
+! then interpolate over the j value at i
 ! Update j value as necessary
          j = 1
          do 
@@ -66,10 +69,10 @@
          enddo
 
  !        if(j==1) j=2
-         mT2 = (eostable(i,j-1,2) - eostable(i,j,2))/ &
+         mtemp2 = (eostable(i,j-1,2) - eostable(i,j,2))/ &
               (eostable(i,j-1,3) - eostable(i,j,3))
-         cT2 = eostable(i,j,2) - mT2*eostable(i,j,3)
-         T2 = mT2*cs + cT2
+         ctemp2 = eostable(i,j,2) - mtemp2*eostable(i,j,3)
+         temp2 = mtemp2*cs + ctemp2
          
          mmu2 = (eostable(i,j-1,4) - eostable(i,j,4))/ &
               (eostable(i,j-1,3) - eostable(i,j,3))
@@ -87,9 +90,9 @@
          gamma2 = mgamma2*cs + cgamma2
 
 ! Finally interpolate over i at the fractional j value
-         mT = (T2 - T1) / (eostable(i,1,1)-eostable(i-1,1,1))
-         cT = T2 - mT*eostable(i,1,1)
-         T = mT*rho + cT
+         mtemp = (temp2 - temp1) / (eostable(i,1,1)-eostable(i-1,1,1))
+         ctemp = temp2 - mtemp*eostable(i,1,1)
+         temp = mtemp*rho + ctemp
 
          mmu = (mu2 - mu1) / (eostable(i,1,1)-eostable(i-1,1,1))
          cmu = mu2 - mmu*eostable(i,1,1)
@@ -103,6 +106,6 @@
          cgamma = gamma2 - mgamma*eostable(i,1,1)
          gamma = mgamma*rho + cgamma
 
-         cp = cs*cs/(T*gamma*(gamma-1))
+         cp = cs*cs/(temp*gamma*(gamma-1))
 
       end subroutine eos_cs

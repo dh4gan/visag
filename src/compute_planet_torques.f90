@@ -47,13 +47,17 @@ do iplanet =1,nplanet
 
 
     !*************************************
-    ! Compute the Type I specific torque
+    ! Compute the Type I specific torque (cf Nayakshin)
     !*************************************
 
-    tmigI(iplanet) = 1.0 ! TODO compute type I migration timescale
+    !tmigI(iplanet) = Mstar*Mstar/(mp(iplanet)*mdisc) *&
+    !     (ap(iplanet)*ap(iplanet))/(H*H) *&
+    !     sqrt(ap(iplanet)*ap(iplanet)*ap(iplanet)/(G*mp(iplanet)))
+    tmigI(iplanet) = 1.0
+
     lambdaI(iplanet,i) = 0.5*sqrt(G*Mstar*ap(iplanet))/tmigI(iplanet)
 
-    lambdaI(iplanet,i) = lambdaI(iplanet,i)*exp(-deltap/(H+rhill)) ! TODO is this deltap or deltar? What is deltar?
+    lambdaI(iplanet,i) = lambdaI(iplanet,i)*exp(-deltap/(H+rhill))
 
     !*****************************************************
     ! Compute the interpolative factor f between migration regimes

@@ -136,7 +136,7 @@ def plot_profile_multifiles_variable(prefix, add_planets=False):
     for i in range(len(profilekeys)):
         print str(i+1)+': '+profilekeys[i]
 
-    var = input('Which variable to plot?')
+    var = input('Which variable (1-'+str(len(profilekeys))+')? ')
 
     var = var-1
 

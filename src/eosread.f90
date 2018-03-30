@@ -59,16 +59,16 @@
 	
 !	Calculate gamma first (note column 3 still u)	
 	eostable(i,j,5) = 1.0 + k_B*eostable(i,j,2)/(eostable(i,j,4)*m_H*eostable(i,j,3))
-
-	
+	 
 !	Now calculate sound speed
-	eostable(i,j,3) = SQRT(eostable(i,j,5)*k_B*eostable(i,j,2)/(eostable(i,j,4)*m_H))
+	eostable(i,j,3) = eostable(i,j,5)*(eostable(i,j,5)-1)*eostable(i,j,3)
 	
+
 	enddo
 	enddo	
 			
 	print*, 'Equation of state now fully initialised'
-			
+
       return
       end subroutine eosread
         

@@ -131,6 +131,9 @@ def plot_profile_multifiles_variable(prefix, add_planets=False):
     filenames = ff.find_sorted_local_input_fileset(prefix+"*profile*")
     nfiles = len(filenames)
 
+    initial = input('Starting filenumber? ')
+    final = input('Final filenumber? ')
+
     print 'Now select variable to plot: here are the choices'
 
     for i in range(len(profilekeys)):
@@ -140,8 +143,7 @@ def plot_profile_multifiles_variable(prefix, add_planets=False):
 
     var = var-1
 
-    initial = input('Starting filenumber? ')
-    final = input('Final filenumber? ')
+
 
     if(final>nfiles):
         print "Limiting count to available files"

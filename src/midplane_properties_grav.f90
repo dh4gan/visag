@@ -9,7 +9,7 @@
     
     real,dimension(nmax) :: tauplus
     real(kind=8) :: twoDint,fine,oldtry
-    real(kind=8) :: rho,H, Teff
+    real(kind=8) :: rho,H, Teff,Qfactor
     integer :: i
 
     coolfunc(:) = 0.0
@@ -45,10 +45,9 @@
         
         ! Calculate Q
         Q(i) = cs(i)*omegaK(i)/(pi*G*sigma(i))
-!        write(77,*) t,i, rho,cs(i),H/AU, Tc(i),Q(i)
 
         ! Now calculate cooling time
-        tau(i) = H*kappa(i)*rho + tauplus(i)
+        tau(i) = kappa(i)*sigma(i) + tauplus(i)
 
         ! Cooling function for disc
         coolfunc(i) = 16.0d0/3.0d0*stefan*(Tc(i)**4.0d0-T_source(i)**4.0d0)
@@ -76,13 +75,20 @@
      ENDIF
 
 if(gamma(i)>1.000001) then
-alpha_g(i) =  9.0d0/4.0d0*gamma(i)*(gamma(i)-1.0)*tcool(i)*omegaK(i)
-alpha_g(i) =  1.0d0/alpha_g(i)
+   alpha_g(i) =  9.0d0/4.0d0*gamma(i)*(gamma(i)-1.0)*tcool(i)*omegaK(i)
+   alpha_g(i) =  1.0d0/alpha_g(i)
 
 else if (alpha_g(i) .lt. 1.0d-12.or.gamma(i)<1.00001) THEN
-alpha_g(i) = 1.0d-12
+   alpha_g(i) = 1.0d-12
 
 endif
+
+! Modify alpha so that only effective in self-gravitating regions
+
+Qfactor = exp(-Q(i)/Qcrit)
+if(Qfactor>1.0) Qfactor = 1.0
+
+alpha_g(i) = alpha_g(i)*Qfactor
 
 nu_tc(i) = alpha_g(i)*cs(i)*cs(i)/omegaK(i)
 

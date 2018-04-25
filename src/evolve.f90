@@ -28,7 +28,7 @@ subroutine evolve
 
   dtmin = 1.0d20
   If (t .lt. 1.0d6) Then
-     C0 = 0.005d0
+     C0 = 0.001d0
   Else If (t .lt. 1.0d7) Then
      C0 = 0.05d0
   Else
@@ -41,12 +41,17 @@ subroutine evolve
      dr2= dr**2
      dt  = C0 * dr2 / (6.0d0 * nu_tc(i))
      dtmin = min(dtmin,dt)
-     dtmin = min(dtmin,0.01*tcool(i))
+     dtmin = min(dtmin,0.001*tcool(i))
+     dtmin = min(dtmin,1.5*yr) ! 
   enddo
 
   dt = dtmin
     
-  IF(dt>tdump) dt = tdump/2.0
+  print*, t/yr, dtmin/yr, 0.001*minval(pack(tcool, tcool>0.0))/yr
+  IF(dt>tdump) then
+     print*, 'Reducing dt for rapid snapshotting'
+     dt = tdump/2.0
+  endif
 
   ! Set v_r = 0 outer bc
   ! This requires nu.sigma.r^{1/2} to have zero gradient
@@ -61,7 +66,6 @@ subroutine evolve
 
   if(planetchoice=='y') then
   ! Compute torques induced on the disc by planets
-  
      call compute_planet_torques
   endif
 
@@ -87,7 +91,12 @@ subroutine evolve
      dTcdr = (Tc(i+1) -Tc(i))*drzm1(i)
 
      snew(i) = sigma(i) + 3.0d0*rzm1(i)*drzm1(i)*(term1-term2 +dtorque)*dt +sigdot(i)*dt
-     Tnew(i) = Tc(i) + 2.0*dt*(heatfunc(i)-coolfunc(i))/(cp(i)*sigma(i)) -vr*dTcdr*dt
+
+     if(runmode/='Q') then
+        Tnew(i) = Tc(i) + 2.0*dt*(heatfunc(i)-coolfunc(i))/(cp(i)*sigma(i)) -vr*dTcdr*dt
+     else
+        Tnew(i) = Tc(i)
+     endif
 
   enddo
   !$OMP END DO

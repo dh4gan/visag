@@ -82,6 +82,9 @@
   !$OMP END DO
   !$OMP END PARALLEL
 
+  omegak(isr-1) = omegak(isr)
+  cs(isr-1) = cs(isr)
+
 return
 
 END SUBROUTINE midplane_properties_fixedalpha

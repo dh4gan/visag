@@ -12,6 +12,7 @@ implicit none
 
 integer :: iplanet,i
 real :: rhill,H,mratio,deltap, Pcrit
+real :: Hprev, Hnext, dr_sigmaH,tmig1
 
 torquei(:,:) = 0.0
 total_planet_torque(:) = 0.0
@@ -50,15 +51,31 @@ do iplanet =1,nplanet
     ! Compute the Type I specific torque (cf Nayakshin)
     !*************************************
 
-    !tmigI(iplanet) = Mstar*Mstar/(mp(iplanet)*mdisc) *&
-    !     (ap(iplanet)*ap(iplanet))/(H*H) *&
-    !     sqrt(ap(iplanet)*ap(iplanet)*ap(iplanet)/(G*mp(iplanet)))
-    tmigI(iplanet) = 1.0
+    ! Type I torque depends on gradient of sigma*omega*H
 
-    lambdaI(iplanet,i) = 0.5*sqrt(G*Mstar*ap(iplanet))/tmigI(iplanet)
+    if(i>isr .and. i <ier) then
 
-    lambdaI(iplanet,i) = lambdaI(iplanet,i)*exp(-deltap/(H+rhill))
+       Hprev = cs(i-1)/omegaK(i-1)
+       Hnext = cs(i+1)/omegaK(i+1)
 
+     !dr_sigmaH = 0.5*drzm1(i)*(sigma(i+1)*Hnext*Hnext - &
+     !    2.0*sigma(i)*H*H - &
+     !    sigma(i-1)*Hprev*Hprev)
+
+     dr_sigmaH = 0.5*drzm1(i)*(sigma(i+1)*Hnext*Hnext - &
+         sigma(i)*H*H)
+    else
+       dr_sigmaH = 0.0
+    endif
+
+    !print*, dr_sigmaH
+    lambdaI(iplanet,i) = 0.5*pi*mratio*mratio*G*Mstar/(ap(iplanet)*ap(iplanet))*dr_sigmaH
+    !lambdaI(iplanet,i) = 0.25*mratio*dr_sigmaH/(ap(iplanet)*ap(iplanet))
+    
+    lambdaI(iplanet,i) = lambdaI(iplanet,i)*exp(-deltap/(H+rhill))/(omegaK(i)*omegaK(i)*rz(i)*rz(i)*sigma(i))
+
+
+    tmig1 = Mstar/(mratio*pi*sigma(i)*H*H)*sqrt(ap(iplanet)*ap(iplanet)*ap(iplanet)/(G*Mstar))/yr
     !*****************************************************
     ! Compute the interpolative factor f between migration regimes
     !******************************************************
@@ -67,10 +84,11 @@ do iplanet =1,nplanet
 
     Pcrit = 0.75 * H/rhill + 50.0*alpha_g(i)*(H/ap(iplanet))**2/mratio
 
-    fII(iplanet,i) = exp(1.0-Pcrit)
-    if(fII(iplanet,i) < 1.0) fII(iplanet,i)=1.0
+    fII(iplanet,i) = exp(-Pcrit-1.0)
+    if(fII(iplanet,i) > 1.0) fII(iplanet,i)=1.0
 
-    fII(iplanet,i) = 1.0 ! DEBUG LINE - REMOVE!
+
+    !fII(iplanet,i) = 1.0 ! DEBUG LINE - REMOVE!
 
     !********************************************************
     ! Compute the total effective planet torque at this radius
@@ -78,12 +96,7 @@ do iplanet =1,nplanet
 
     torquei(iplanet,i) = lambdaI(iplanet,i)*(1.0-fII(iplanet,i)) + lambdaII(iplanet,i)*fII(iplanet,i)
 
-!    if(sigma(i)<1.0e1) then
-!       print*, 'GAP: ',rz(i)/AU,deltap/AU, H/AU,lambdaII(1,i)
-!    endif
-
-
-    !if(i==10) print*, 'TORQUE', i,lambdaII(1,i), H/AU, rz(i)/AU, ap(iplanet)/AU,deltap/AU
+    print*, rz(i)/AU,lambdaI(iplanet,i),lambdaII(iplanet,i), torquei(iplanet,i),tmig1
 
     enddo
 
@@ -92,10 +105,8 @@ do iplanet =1,nplanet
 
 total_planet_torque(:) = total_planet_torque(:) + torquei(iplanet,:)
 
-torque_term(:) = 2.0*omegaK(:)*rz(:)*rz(:)*sigma(:)*total_planet_torque(:)
+torque_term(:) = 2.0*omegaK(:)*omegaK(:)*rz(:)*rz(:)*sigma(:)*total_planet_torque(:)
 
 enddo
-
-
 
 end subroutine compute_planet_torques

@@ -67,7 +67,8 @@ open(iprof, file=TRIM(prefix)//'_planets.'//fileno,status='unknown')
 write(iprof,*)t/yr,nplanet,nactive
 do iplanet=1,nplanet
 
-    write(iprof,*) alive(iplanet),mp(iplanet)/mjup, ap(iplanet)/AU
+    write(iprof,*) alive(iplanet),mp(iplanet)/mjup, &
+         ap(iplanet)/AU, tmig(iplanet)/yr
 enddo
 close(iprof)
 endif

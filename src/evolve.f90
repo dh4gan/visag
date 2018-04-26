@@ -41,13 +41,13 @@ subroutine evolve
      dr2= dr**2
      dt  = C0 * dr2 / (6.0d0 * nu_tc(i))
      dtmin = min(dtmin,dt)
-     dtmin = min(dtmin,0.001*tcool(i))
+     dtmin = min(dtmin,0.01*tcool(i))
      dtmin = min(dtmin,1.5*yr) ! 
   enddo
 
   dt = dtmin
     
-  print*, t/yr, dtmin/yr, 0.001*minval(pack(tcool, tcool>0.0))/yr
+!  print*, t/yr, dtmin/yr, 0.001*minval(pack(tcool, tcool>0.0))/yr
   IF(dt>tdump) then
      print*, 'Reducing dt for rapid snapshotting'
      dt = tdump/2.0

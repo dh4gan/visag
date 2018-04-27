@@ -10,7 +10,7 @@
 
 # Compiler variables for WKMR/DHF:
 FC     = gfortran
-
+VPATH = main/ eos/ io/ layer/ planet/ setup/ wind/
 
 # For real*8 files
 FFLAGS = -O3 -fdefault-real-8 -fbounds-check

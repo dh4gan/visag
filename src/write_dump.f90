@@ -97,17 +97,20 @@ sig_max = max(sig_max,sigma_tot(i))
 mdot_grav = mdot_grav + 3.0*pi*nu_tc(i)*sigma(i)/REAL(nrgrid)
 mdot_mag = mdot_mag + 3.0*pi*nu_m(i)*sigma_m(i)/REAL(nrgrid)
 
+mdot_wind = mdot_wind + sigdot_wind(i)*twopi*rz(i)/drzm1(i)
+
 enddo
 
 mdisk = mdisk/solarmass
 mgrav = mgrav/solarmass
 mmag = mmag/solarmass
 
-mdot_grav = mdot_grav*yr/solarmass
-mdot_mag = mdot_mag*yr/solarmass
+mdot_grav = mdot_grav/msolyr
+mdot_mag = mdot_mag/msolyr
+mdot_wind = mdot_wind/msolyr
 
 ! Write out snapshot data (disk mass, sigma, total luminosity)
-write(itime,111) t/yr, dt/yr, mdisk, tot_lumin, sig_max,mgrav,mmag,grav_max,mag_max,mdot_grav,mdot_mag
+write(itime,111) t/yr, dt/yr, mdisk, tot_lumin, sig_max,mgrav,mmag,grav_max,mag_max,mdot_grav,mdot_mag,mdot_wind
 call flush(itime)
  
   return

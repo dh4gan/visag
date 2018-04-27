@@ -46,19 +46,19 @@ profileymax[10] = 1.0e2
 
 # Variables for log data
 
-logkeys = ['t', 'dt','mdisc', 'tot_lumin', 'sig_max', 'mgrav', 'mmag', 'grav_max', 'mag_max', 'mdot_grav', 'mdot_mag' ]
+logkeys = ['t', 'dt','mdisc', 'tot_lumin', 'sig_max', 'mgrav', 'mmag', 'grav_max', 'mag_max', 'mdot_grav', 'mdot_mag','mdot_wind' ]
 
 
 loglabels = [r't (yr)', r'dt (yr)', r'$M_{disc}$ ($M_{\odot}$)',
              r'$L_{tot}$ ($L_{\odot}$)',r' $\Sigma_{grav,max}$ (g cm$^{-2}$)',
              r'$M_{grav}$ ($M_{\odot}$)',r'$M_{MRI}$ ($M_{\odot}$)',
              r' $\Sigma_{grav,max}$ (g cm$^{-2}$)', r' $\Sigma_{MRI,max}$ (g cm$^{-2}$)',
-             r'$\dot{M}_{grav}$ ($M_{\odot} yr^{-1}$)', r'$\dot{M}_{mag}$ $(M_{\odot} yr^{-1}$)']
+             r'$\dot{M}_{grav}$ ($M_{\odot} yr^{-1}$)', r'$\dot{M}_{mag}$ $(M_{\odot} yr^{-1}$)',r'$\dot{M}_{wind}$ $(M_{\odot} yr^{-1}$)']
 
 logxlabel = loglabels[0]
 
 # Log the y axis? True/False
-logylog=[False, False, False,True,True,True,True,True,True,True,True]
+logylog=[False, False, False,True,True,True,True,True,True,True,True,True]
 
 # y limits - set defaults first
 logymin=[]

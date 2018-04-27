@@ -12,7 +12,8 @@ implicit none
 
 integer :: iplanet,i
 real :: rhill,H,mratio,deltap, Pcrit
-real :: Hprev, Hnext, dr_sigmaH,tmig1
+real :: Hprev, Hnext, deltap_prev,deltap_next
+real :: dr_sigmaH,tmig1
 
 torquei(:,:) = 0.0
 total_planet_torque(:) = 0.0
@@ -23,8 +24,6 @@ do iplanet =1,nplanet
     mratio = mp(iplanet)/Mstar
     rhill = ap(iplanet)*(mratio/3.0)**0.333
 
-    
-
     do i = isr,ier
 
     !*****************************************************
@@ -33,7 +32,6 @@ do iplanet =1,nplanet
 
     deltap = abs(rz(i)-ap(iplanet))
     H = cs(i)/omegaK(i)        
-
 
     if(H>deltap) deltap =H
 
@@ -55,25 +53,23 @@ do iplanet =1,nplanet
 
     if(i>isr .and. i <ier) then
 
+       deltap_prev = abs(rz(i-1)-ap(iplanet))
+       deltap_next = abs(rz(i+1)-ap(iplanet))
        Hprev = cs(i-1)/omegaK(i-1)
        Hnext = cs(i+1)/omegaK(i+1)
 
-     !dr_sigmaH = 0.5*drzm1(i)*(sigma(i+1)*Hnext*Hnext - &
-     !    2.0*sigma(i)*H*H - &
-     !    sigma(i-1)*Hprev*Hprev)
+       dr_sigmaH = 0.5*drzm1(i)*(sigma(i+1)*Hnext*Hnext*exp(-deltap_next/(H+rhill)) - &
+         2.0*sigma(i)*H*H*exp(-deltap/(H+rhill)) - &
+         sigma(i-1)*Hprev*Hprev*exp(-deltap_prev/(H+rhill)))
 
-     dr_sigmaH = 0.5*drzm1(i)*(sigma(i+1)*Hnext*Hnext - &
-         sigma(i)*H*H)
+     !dr_sigmaH = 0.5*drzm1(i)*(sigma(i+1)*Hnext*Hnext*exp(-deltap_next/(H+rhill)) - &
+     !    sigma(i)*H*H*exp(-deltap/(H+rhill)))
     else
        dr_sigmaH = 0.0
     endif
 
     !print*, dr_sigmaH
-    lambdaI(iplanet,i) = 0.5*pi*mratio*mratio*G*Mstar/(ap(iplanet)*ap(iplanet))*dr_sigmaH
-    !lambdaI(iplanet,i) = 0.25*mratio*dr_sigmaH/(ap(iplanet)*ap(iplanet))
-    
-    lambdaI(iplanet,i) = lambdaI(iplanet,i)*exp(-deltap/(H+rhill))/(omegaK(i)*omegaK(i)*rz(i)*rz(i)*sigma(i))
-
+    lambdaI(iplanet,i) = 0.25*mratio*dr_sigmaH/(sigma(i)*ap(iplanet)*ap(iplanet))
 
     tmig1 = Mstar/(mratio*pi*sigma(i)*H*H)*sqrt(ap(iplanet)*ap(iplanet)*ap(iplanet)/(G*Mstar))/yr
     !*****************************************************

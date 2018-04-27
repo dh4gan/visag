@@ -15,7 +15,7 @@ SUBROUTINE setup_accrete
 
   allocate(sigdot_accrete(nmax))
 
-sigdot_accrete(:) = 0.0 
+sigdot_accrete(:) = 0.0
 
   ! Calculate discrete integral from adding together Gaussian over 3 * sd
 

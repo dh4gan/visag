@@ -22,6 +22,5 @@ f   	- Background temperature: (f=fixed T, s=stellar ,Ida and Lin prescription)
 40.0	- sigma spectral break radius (AU)
 30.0 	- max height above disk (AU)
 1.0d-8 	- initial accretion rate in solar masses / yr
-10.0	- inner radius for photoevaporation (AU)
-5.0d-9  - initial wind mass loss rate (evaluated to 25AU)
+1.0e30  - X Ray luminosity (in ergs s-1)
 0.05	- move planets straying inside this radius (AU)

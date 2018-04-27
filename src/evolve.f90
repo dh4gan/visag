@@ -7,7 +7,7 @@ subroutine evolve
   use gravdata
   use planetdata
   use unitdata
-use winddata, only: sigdot_wind
+use winddata, only: sigdot_wind, sigdot_accrete
 
   implicit none
 
@@ -96,7 +96,7 @@ use winddata, only: sigdot_wind
 
 
 
-     snew(i) = sigma(i) + 3.0d0*rzm1(i)*drzm1(i)*(term1-term2 +dtorque)*dt -sigdot_wind(i)*dt
+     snew(i) = sigma(i) + 3.0d0*rzm1(i)*drzm1(i)*(term1-term2 +dtorque)*dt -(sigdot_wind(i)+sigdot_accrete(i))*dt
 
      if(runmode/='Q') then
         Tnew(i) = Tc(i) + 2.0*dt*(heatfunc(i)-coolfunc(i))/(cp(i)*sigma(i)) -vr*dTcdr*dt

@@ -15,7 +15,7 @@ integer :: i
 real :: sigdot_diff, sigdot_dir,rdir_min
 real :: xwind, sigdotxray
 
-
+sigdot_wind(:) = 0.0
 
 do i= isr,ier
 Call wind_profiles(sigdot_diff,sigdot_dir,rz(i), mstar, rdir_min)

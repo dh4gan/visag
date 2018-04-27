@@ -263,11 +263,14 @@ endif
      drzm1(i) = 1.0d0 / (rf(i+1)-rf(i))
   enddo
 
-    
+
+  ! Set up winds
   call setup_wind
 
-    ! TODO set up accreting behaviour
-  !call set_accrete
+  ! set up accretion from infall
+  call setup_accrete
+
+sigdot_accrete(:)= 0.0 ! Accretion turned off for now
 
   ! Set up surface density - iterates towards correct initial disk mass
 

@@ -32,7 +32,7 @@ SOURCESAF90 = grav_module.f90 mri_module.f90 planet_module.f90 \
               evolve.f90 evolve_layer.f90 layer_properties.f90 midplane_properties.f90 \
 	      midplane_properties_grav.f90 midplane_properties_fixedalpha.f90 \
 	      midplane_properties_grav_fixedQ.f90  migrate_planets.f90 \
-              luminosity.f90 setup.f90 set_accrete.f90 setup_planets.f90 setup_wind.f90  \
+              luminosity.f90 setup.f90 setup_accrete.f90 setup_planets.f90 setup_wind.f90  \
 	      wind_profiles.f90 xraywind.f90 write_dump.f90 	      
 
 OBJECTSA    = $(SOURCESAF90:.f90=.o)

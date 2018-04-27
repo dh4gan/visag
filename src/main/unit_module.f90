@@ -31,6 +31,6 @@ module unitdata
 character(len=1) :: runmode, layerchoice, tempchoice, zerostring
 character(len=6) :: snapshotformat
   character(len=100) :: fileno,prefix
-  character(len=25), parameter :: paramfile = 'semi_analytic_disc.params'
+  character(len=25), parameter :: paramfile = 'visag.params'
 
 end module unitdata

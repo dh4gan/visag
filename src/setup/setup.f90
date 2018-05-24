@@ -56,8 +56,7 @@ subroutine setup
   read(10,*) rmax    ! Outer disc radius
   read(10,*) zmax    ! Maximum altitude
   read(10,*) mdot_init ! Initial accretion rate
-  read(10,*) rwind    ! Wind Radius
-  read(10,*) mdot_wind ! Wind loss rate
+  read(10,*) Lx       ! X Ray luminosity
   read(10,*) rremove  ! Radius at which planets are removed
 
   prefix = trim(prefix)
@@ -96,8 +95,7 @@ endif
   write (*,101) ' - trun   = ',trun, ' yr'
   write (*,101) ' - tdump  = ',tdump, ' yr'	
   write (*,101) ' - mdot   = ',mdot_init, ' solar masses / yr'
-  write (*,101) ' - r_wind = ',rwind, ' AU'
-  write (*,101) ' - wind loss = ',mdot_wind, ' solar masses / yr'
+  write (*,101) ' - X Ray Luminosity = ',Lx, ' erg s-1'
   write (*,101) ' - inner cut = ',rremove, ' AU'
   write(*,*) "-----------------------------------------------"
 100 format (A,I5)
@@ -114,11 +112,9 @@ endif
   ! Convert variables to cgs units
 
   mdot_init = mdot_init * msolyr
-  mdot_wind = mdot_wind * msolyr
 
   rin = rin*AU
   rout = rout*AU
-  rwind = rwind*AU
   rmax = rmax *AU
   zmax = zmax*AU
 
@@ -267,10 +263,14 @@ endif
      drzm1(i) = 1.0d0 / (rf(i+1)-rf(i))
   enddo
 
-! (TODO) Set up sigma dot, due to winds and infall
 
-  !call set_wind
-  !call set_accrete
+  ! Set up winds
+  call setup_wind
+
+  ! set up accretion from infall
+  call setup_accrete
+
+sigdot_accrete(:)= 0.0 ! Accretion turned off for now
 
   ! Set up surface density - iterates towards correct initial disk mass
 

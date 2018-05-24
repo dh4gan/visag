@@ -10,9 +10,11 @@ subroutine compute_planet_torques
 
   implicit none
 
+
   integer :: iplanet,i
   real :: rhill,H,mratio,deltap, Pcrit, typeInorm
   real :: Hprev, Hnext, dr_sigmaH,tmig1
+
 
   torquei(:,:) = 0.0
   total_planet_torque(:) = 0.0
@@ -23,8 +25,10 @@ subroutine compute_planet_torques
      mratio = mp(iplanet)/Mstar
      rhill = ap(iplanet)*(mratio/3.0)**0.333
 
+
      typeInorm = 0.0
 
+    do i = isr,ier
 
      !**************************************************************
      ! Compute Type II and Type I torques (appropriately normalised)
@@ -32,14 +36,14 @@ subroutine compute_planet_torques
 
      do i = isr,ier
 
+
         !*****************************************************
         ! Compute the Type II specific torque at this radius
         !*****************************************************
 
         deltap = abs(rz(i)-ap(iplanet))
         H = cs(i)/omegaK(i)        
-
-
+        
         if(H>deltap) deltap =H
 
         if(rhill>deltap) deltap=rhill
@@ -50,7 +54,6 @@ subroutine compute_planet_torques
         else
            lambdaII(iplanet,i) = lambdaII(iplanet,i)*ap(iplanet)**4
         endif
-
 
         !*************************************
         ! Compute the Type I specific torque (cf Nayakshin)
@@ -63,19 +66,22 @@ subroutine compute_planet_torques
            Hprev = cs(i-1)/omegaK(i-1)
            Hnext = cs(i+1)/omegaK(i+1)
 
-           !dr_sigmaH = 0.5*drzm1(i)*(sigma(i+1)*Hnext*Hnext - &
-           !    2.0*sigma(i)*H*H - &
-           !    sigma(i-1)*Hprev*Hprev)
 
-           dr_sigmaH = 0.5*drzm1(i)*(sigma(i+1)*Hnext*Hnext - &
-                sigma(i)*H*H)
-        else
-           dr_sigmaH = 0.0
-        endif
+       deltap_prev = abs(rz(i-1)-ap(iplanet))
+       deltap_next = abs(rz(i+1)-ap(iplanet))
+       Hprev = cs(i-1)/omegaK(i-1)
+       Hnext = cs(i+1)/omegaK(i+1)
 
-        !print*, dr_sigmaH
-        !lambdaI(iplanet,i) = 0.5*pi*mratio*mratio*G*Mstar/(ap(iplanet)*ap(iplanet))*dr_sigmaH
-        lambdaI(iplanet,i) = 0.25*mratio*dr_sigmaH/(ap(iplanet)*ap(iplanet))
+       dr_sigmaH = 0.5*drzm1(i)*(sigma(i+1)*Hnext*Hnext*exp(-deltap_next/(H+rhill)) - &
+         2.0*sigma(i)*H*H*exp(-deltap/(H+rhill)) - &
+         sigma(i-1)*Hprev*Hprev*exp(-deltap_prev/(H+rhill)))
+
+    else
+       dr_sigmaH = 0.0
+    endif
+
+
+        lambdaI(iplanet,i) = 0.25*mratio*dr_sigmaH/(sigma(i)*ap(iplanet)*ap(iplanet))
 
         typeInorm = typeInorm + exp(-deltap/(H+rhill))/drzm1(i)
 

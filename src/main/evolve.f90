@@ -7,6 +7,7 @@ subroutine evolve
   use gravdata
   use planetdata
   use unitdata
+use winddata, only: sigdot_wind, sigdot_accrete
 
   implicit none
 
@@ -69,6 +70,9 @@ subroutine evolve
      call compute_planet_torques
   endif
 
+
+  call compute_wind
+
   ! Evolve the surface density with the diffusive term
 
   !$OMP PARALLEL &
@@ -90,7 +94,9 @@ subroutine evolve
      vr = -3.0*term2/(rf(i)*sigma(i))
      dTcdr = (Tc(i+1) -Tc(i))*drzm1(i)
 
-     snew(i) = sigma(i) + 3.0d0*rzm1(i)*drzm1(i)*(term1-term2 +dtorque)*dt +sigdot(i)*dt
+
+
+     snew(i) = sigma(i) + 3.0d0*rzm1(i)*drzm1(i)*(term1-term2 +dtorque)*dt -(sigdot_wind(i)+sigdot_accrete(i))*dt
 
      if(runmode/='Q') then
         Tnew(i) = Tc(i) + 2.0*dt*(heatfunc(i)-coolfunc(i))/(cp(i)*sigma(i)) -vr*dTcdr*dt

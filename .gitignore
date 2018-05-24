@@ -1,5 +1,5 @@
 *.ps
 *.o
 *.mod
-semi_analytic_disc
+visag
 plot/*.pyc

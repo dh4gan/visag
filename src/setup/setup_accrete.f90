@@ -1,4 +1,4 @@
-SUBROUTINE set_accrete
+SUBROUTINE setup_accrete
 ! Calculates sigma dot expected from mass infall rate
 ! (This version assumes a Gaussian distribution for sigma dot)
 
@@ -12,6 +12,10 @@ SUBROUTINE set_accrete
 
   real :: inner,outer, term, integral
   real :: mean, sd
+
+  allocate(sigdot_accrete(nmax))
+
+sigdot_accrete(:) = 0.0
 
   ! Calculate discrete integral from adding together Gaussian over 3 * sd
 
@@ -46,9 +50,9 @@ SUBROUTINE set_accrete
 
   DO i=in,out
      term =  exp(-(rf(i)-mean)**2/(2.0*sd*sd))/sqrt(2.0*pi*sd*sd)
-     sigdot(i) = sigdot(i)+mdot_init*term/integral
+     sigdot_accrete(i) = sigdot_accrete(i)+mdot_init*term/integral
   ENDDO
 
 
 return
-end subroutine set_accrete
+end subroutine setup_accrete

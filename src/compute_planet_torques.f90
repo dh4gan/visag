@@ -11,7 +11,7 @@ use unitdata
 implicit none
 
 integer :: iplanet,i
-real :: rhill,H,mratio,deltap, Pcrit
+real :: rhill,H,mratio,deltap, Pcrit, typeInorm
 real :: Hprev, Hnext, dr_sigmaH,tmig1
 
 torquei(:,:) = 0.0
@@ -23,7 +23,12 @@ do iplanet =1,nplanet
     mratio = mp(iplanet)/Mstar
     rhill = ap(iplanet)*(mratio/3.0)**0.333
 
-    
+    typeInorm = 0.0
+
+
+    !**************************************************************
+    ! Compute Type II and Type I torques (appropriately normalised)
+    !**************************************************************
 
     do i = isr,ier
 
@@ -51,7 +56,7 @@ do iplanet =1,nplanet
     ! Compute the Type I specific torque (cf Nayakshin)
     !*************************************
 
-    ! Type I torque depends on gradient of sigma*omega*H
+    ! Type I torque depends on gradient of sigma*H^2
 
     if(i>isr .and. i <ier) then
 
@@ -69,13 +74,26 @@ do iplanet =1,nplanet
     endif
 
     !print*, dr_sigmaH
-    lambdaI(iplanet,i) = 0.5*pi*mratio*mratio*G*Mstar/(ap(iplanet)*ap(iplanet))*dr_sigmaH
-    !lambdaI(iplanet,i) = 0.25*mratio*dr_sigmaH/(ap(iplanet)*ap(iplanet))
+    !lambdaI(iplanet,i) = 0.5*pi*mratio*mratio*G*Mstar/(ap(iplanet)*ap(iplanet))*dr_sigmaH
+    lambdaI(iplanet,i) = 0.25*mratio*dr_sigmaH/(ap(iplanet)*ap(iplanet))
     
-    lambdaI(iplanet,i) = lambdaI(iplanet,i)*exp(-deltap/(H+rhill))/(omegaK(i)*omegaK(i)*rz(i)*rz(i)*sigma(i))
+    typeInorm = typeInorm + exp(-deltap/(H+rhill))/drzm1(i)
+
+    lambdaI(iplanet,i) = lambdaI(iplanet,i)*exp(-deltap/(H+rhill))
+
+    enddo
+
+    ! Normalise Type I torque
+
+    lambdaI(iplanet,:) = lambdaI(iplanet,:)/typeInorm
 
 
-    tmig1 = Mstar/(mratio*pi*sigma(i)*H*H)*sqrt(ap(iplanet)*ap(iplanet)*ap(iplanet)/(G*Mstar))/yr
+    !**************************************************
+    ! Now compute the relative dominance of each torque 
+    !**************************************************
+
+    do i= isr,ier
+
     !*****************************************************
     ! Compute the interpolative factor f between migration regimes
     !******************************************************
@@ -96,12 +114,10 @@ do iplanet =1,nplanet
 
     torquei(iplanet,i) = lambdaI(iplanet,i)*(1.0-fII(iplanet,i)) + lambdaII(iplanet,i)*fII(iplanet,i)
 
-    print*, rz(i)/AU,lambdaI(iplanet,i),lambdaII(iplanet,i), torquei(iplanet,i),tmig1
-
     enddo
 
 
-! Add planet contribution to the total torque exerted on the disc
+    ! Add planet contribution to the total torque exerted on the disc
 
 total_planet_torque(:) = total_planet_torque(:) + torquei(iplanet,:)
 

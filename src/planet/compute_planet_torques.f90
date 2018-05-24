@@ -13,6 +13,7 @@ subroutine compute_planet_torques
 
   integer :: iplanet,i
   real :: rhill,H,mratio,deltap, Pcrit, typeInorm
+  real :: deltap_next, deltap_prev
   real :: Hprev, Hnext, dr_sigmaH,tmig1
 
 
@@ -26,9 +27,7 @@ subroutine compute_planet_torques
      rhill = ap(iplanet)*(mratio/3.0)**0.333
 
 
-     typeInorm = 0.0
-
-    do i = isr,ier
+     typeInorm = 0.0    
 
      !**************************************************************
      ! Compute Type II and Type I torques (appropriately normalised)
@@ -43,7 +42,7 @@ subroutine compute_planet_torques
 
         deltap = abs(rz(i)-ap(iplanet))
         H = cs(i)/omegaK(i)        
-        
+
         if(H>deltap) deltap =H
 
         if(rhill>deltap) deltap=rhill
@@ -67,18 +66,18 @@ subroutine compute_planet_torques
            Hnext = cs(i+1)/omegaK(i+1)
 
 
-       deltap_prev = abs(rz(i-1)-ap(iplanet))
-       deltap_next = abs(rz(i+1)-ap(iplanet))
-       Hprev = cs(i-1)/omegaK(i-1)
-       Hnext = cs(i+1)/omegaK(i+1)
+           deltap_prev = abs(rz(i-1)-ap(iplanet))
+           deltap_next = abs(rz(i+1)-ap(iplanet))
+           Hprev = cs(i-1)/omegaK(i-1)
+           Hnext = cs(i+1)/omegaK(i+1)
 
-       dr_sigmaH = 0.5*drzm1(i)*(sigma(i+1)*Hnext*Hnext*exp(-deltap_next/(H+rhill)) - &
-         2.0*sigma(i)*H*H*exp(-deltap/(H+rhill)) - &
-         sigma(i-1)*Hprev*Hprev*exp(-deltap_prev/(H+rhill)))
+           dr_sigmaH = 0.5*drzm1(i)*(sigma(i+1)*Hnext*Hnext*exp(-deltap_next/(H+rhill)) - &
+                2.0*sigma(i)*H*H*exp(-deltap/(H+rhill)) - &
+                sigma(i-1)*Hprev*Hprev*exp(-deltap_prev/(H+rhill)))
 
-    else
-       dr_sigmaH = 0.0
-    endif
+        else
+           dr_sigmaH = 0.0
+        endif
 
 
         lambdaI(iplanet,i) = 0.25*mratio*dr_sigmaH/(sigma(i)*ap(iplanet)*ap(iplanet))

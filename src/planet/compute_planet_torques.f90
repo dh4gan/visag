@@ -13,8 +13,8 @@ subroutine compute_planet_torques
 
   integer :: iplanet,i
   real :: rhill,H,mratio,deltap, Pcrit, typeInorm
-  real :: deltap_next, deltap_prev
-  real :: Hprev, Hnext, dr_sigmaH,tmig1
+  real :: tmig1, lambda_dash
+
 
 
   torquei(:,:) = 0.0
@@ -58,39 +58,29 @@ subroutine compute_planet_torques
         ! Compute the Type I specific torque (cf Nayakshin)
         !*************************************
 
-        ! Type I torque depends on gradient of sigma*H^2
-
-        if(i>isr .and. i <ier) then
-
-           Hprev = cs(i-1)/omegaK(i-1)
-           Hnext = cs(i+1)/omegaK(i+1)
-
-
-           deltap_prev = abs(rz(i-1)-ap(iplanet))
-           deltap_next = abs(rz(i+1)-ap(iplanet))
-           Hprev = cs(i-1)/omegaK(i-1)
-           Hnext = cs(i+1)/omegaK(i+1)
-
-           dr_sigmaH = 0.5*drzm1(i)*(sigma(i+1)*Hnext*Hnext*exp(-deltap_next/(H+rhill)) - &
-                2.0*sigma(i)*H*H*exp(-deltap/(H+rhill)) - &
-                sigma(i-1)*Hprev*Hprev*exp(-deltap_prev/(H+rhill)))
-
-        else
-           dr_sigmaH = 0.0
-        endif
-
-
-        lambdaI(iplanet,i) = 0.25*mratio*dr_sigmaH/(sigma(i)*ap(iplanet)*ap(iplanet))
-
-        typeInorm = typeInorm + exp(-deltap/(H+rhill))/drzm1(i)
-
-        lambdaI(iplanet,i) = lambdaI(iplanet,i)*exp(-deltap/(H+rhill))
+        ! Must first compute the total torque and then normalise
+        ! to obtain the correct Type I migration timescale
+           
+        ! Integrate the torque over all radii
+        typeInorm = typeInorm + exp(-deltap/(H+rhill))*sigma(i)*rz(i)/drzm1(i)        
 
      enddo
 
-     ! Normalise Type I torque
+     ! (TODO) compute Type I migration
+     !call typeI_migration_timescale
 
-     lambdaI(iplanet,:) = lambdaI(iplanet,:)/typeInorm
+     tmig1 = 0.0
+     ! Find normalisation constant to ensure correct Type I timescale
+
+     lambda_dash = mp(iplanet)*omegaK(iplanetrad(iplanet))*ap(iplanet)/(4.0*pi*tmig1*typeInorm)
+
+     ! Now compute functional form of lambda 
+     ! (assuming concentration of torque in planet local vicinity)
+     do isr=1,ier
+         deltap = abs(rz(i)-ap(iplanet))
+        H = cs(i)/omegaK(i)  
+        lambdaI(iplanet,:) = lambda_dash*exp(-deltap/(H+rhill))
+     enddo
 
 
      !**************************************************
@@ -111,7 +101,7 @@ subroutine compute_planet_torques
         if(fII(iplanet,i) > 1.0) fII(iplanet,i)=1.0
 
 
-        !fII(iplanet,i) = 1.0 ! DEBUG LINE - REMOVE!
+        fII(iplanet,i) = 0.0 ! DEBUG LINE - REMOVE!
 
         !********************************************************
         ! Compute the total effective planet torque at this radius

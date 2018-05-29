@@ -9,7 +9,7 @@
 
 # Compiler variables:
 FC     = gfortran
-VPATH = main/ eos/ io/ layer/ planet/ setup/ wind/
+VPATH = src/main/ src/eos/ src/io/ src/layer/ src/planet/ src/setup/ src/wind/
 
 # For real*8 files
 FFLAGS = -O3 -fdefault-real-8 -fbounds-check

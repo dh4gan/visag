@@ -124,6 +124,8 @@ endif
   mstar = mstar*solarmass
   mdisk = mdisk*solarmass
 
+  maxstep = 10.0 ! Maximum allowed timestep (in years)
+
 ! Allocate arrays
 
   print*, 'Allocating arrays: '

@@ -20,5 +20,7 @@ subroutine calc_typeI_migration(iplanet, tmig1)
   mdiscmig = pi*ap(iplanet)*ap(iplanet)*sigma(iplanetrad(iplanet))
 
   tmig1 = mstar*mstar*aspectratio*aspectratio/(mdiscmig*mp(iplanet)*omegaK(iplanetrad(iplanet)))
+
+ ! print*, iplanetrad(iplanet), tmig1, aspectratio, mdiscmig, sigma(iplanetrad(iplanet)), iplanetrad(iplanet)
   
 end subroutine calc_typeI_migration

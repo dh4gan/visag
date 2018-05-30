@@ -28,20 +28,23 @@ do iplanet=1,nplanet
 
     ! Multiply by appropriate factors to get adot
 
-    adot(iplanet) = -adot(iplanet)*4.0*pi*G*mstar/(omegaK(iplanetrad(iplanet))*mp(iplanet)*ap(iplanet))
+    !adot(iplanet) = -adot(iplanet)*4.0*pi*G*mstar/(omegaK(iplanetrad(iplanet))*mp(iplanet)*ap(iplanet))
+   adot(iplanet) = -adot(iplanet)*4.0*pi*G/(omegaK(iplanetrad(iplanet))*ap(iplanet))
     
+    call calc_typeI_migration(iplanet,tmigcheck)
     ! get overall migration timescale
     tmig(iplanet) = ap(iplanet)/abs(adot(iplanet))
+       
+    !print*, ap(iplanet)/AU, tmig(iplanet)/yr, tmigcheck/yr
 
-    call calc_typeI_migration(iplanet,tmigcheck)
-
-   print*, iplanet, adot(iplanet), ap(iplanet), tmig(iplanet)/yr, tmigcheck/yr, tmigcheck2/yr      
-        
+    if(tmigcheck<0.0) then
+       print*, 'NEGATIVE TMIG1'
+       stop
+       endif
 
     ap(iplanet) = ap(iplanet) + adot(iplanet)*dt
 
 enddo
 
-STOP
-
+!STOP
 end subroutine migrate_planets

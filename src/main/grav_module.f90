@@ -5,6 +5,7 @@ module gravdata
  integer :: nrgrid,nzgrid,isr,ier,isz,iez, nmax
  real :: rin,rout,zmax, p_T, T_1AU
  real :: t,dt, alpha_visc, T_background
+ real :: maxstep
  real(kind=8) :: mstar, mdot_init
 
   !	Zone centred arrays

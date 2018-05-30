@@ -71,7 +71,9 @@ subroutine compute_planet_torques
 
      ! Find normalisation constant to ensure correct Type I timescale
 
-     lambda_dash = mratio*omegaK(iplanetrad(iplanet))*ap(iplanet)*ap(iplanet)/(4.0*pi*G*tmig1*typeInorm)
+     !lambda_dash = mratio*omegaK(iplanetrad(iplanet))*ap(iplanet)*ap(iplanet)/(4.0*pi*G*tmig1*typeInorm)
+
+     lambda_dash = ap(iplanet)*ap(iplanet)*omegaK(iplanetrad(iplanet))/(4.0*pi*G*tmig1*typeInorm)
 
      ! Now compute functional form of lambda 
      ! (assuming concentration of torque in planet local vicinity)
@@ -104,7 +106,7 @@ subroutine compute_planet_torques
 
         if(fII(iplanet,i) > 1.0) fII(iplanet,i)=1.0
 
-        !fII(iplanet,i) = 0.0 ! DEBUG LINE - REMOVE!
+        !fII(iplanet,i) = 1.0 ! DEBUG LINE - REMOVE!
         
         !********************************************************
         ! Compute the total effective planet torque at this radius
@@ -119,8 +121,8 @@ subroutine compute_planet_torques
 
      total_planet_torque(:) = total_planet_torque(:) + torquei(iplanet,:)
 
-     torque_term(:) = 2.0*omegaK(:)*omegaK(:)*rz(:)*rz(:)*sigma(:)*total_planet_torque(:)
-
   enddo
+  
+   torque_term(:) = 2.0*omegaK(:)*rz(:)*rz(:)*sigma(:)*total_planet_torque(:)
 
 end subroutine compute_planet_torques

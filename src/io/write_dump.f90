@@ -17,9 +17,9 @@ subroutine write_dump
   real :: mdot_grav, mdot_mag, grav_max,mag_max, mmag,mgrav
   integer :: i,ifirst, iplanet
 
-  write (*,103) 'Output at time t = ',t/yr
+  write (*,103) 'Output at time t = ',t/yr, '  years, dt = ',dt/yr, ' years'
 102 format (11(1PE15.5))
-103 format (A,1PE15.5)
+103 format (A,1PE11.3,A,1PE11.3,A)
 104 format (4(1PE15.5))
 110 format(10(1PE15.5))
 111 format (11(1PE15.5))

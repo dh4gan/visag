@@ -62,24 +62,29 @@ subroutine compute_planet_torques
         ! to obtain the correct Type I migration timescale
            
         ! Integrate the torque over all radii
-        typeInorm = typeInorm + exp(-deltap/(H+rhill))*sigma(i)*rz(i)/drzm1(i)        
+        typeInorm = typeInorm + exp(-deltap/(H+rhill))*sigma(i)/drzm1(i)        
 
      enddo
 
-     ! (TODO) compute Type I migration
-     !call typeI_migration_timescale
+     ! Compute Type I migration timescale
+     call calc_typeI_migration(iplanet,tmig1)
 
-     tmig1 = 0.0
      ! Find normalisation constant to ensure correct Type I timescale
 
-     lambda_dash = mp(iplanet)*omegaK(iplanetrad(iplanet))*ap(iplanet)/(4.0*pi*tmig1*typeInorm)
+     lambda_dash = mp(iplanet)*omegaK(iplanetrad(iplanet))*ap(iplanet)/(4.0*pi*G*mstar*tmig1*typeInorm)
+
+     print*, tmig1/yr, typeInorm, lambda_dash
 
      ! Now compute functional form of lambda 
      ! (assuming concentration of torque in planet local vicinity)
-     do isr=1,ier
-         deltap = abs(rz(i)-ap(iplanet))
+     do i=isr,ier
+        deltap = abs(rz(i)-ap(iplanet))
         H = cs(i)/omegaK(i)  
-        lambdaI(iplanet,:) = lambda_dash*exp(-deltap/(H+rhill))
+        if(H>deltap) deltap =H
+        if(rhill>deltap) deltap=rhill
+
+        lambdaI(iplanet,i) = lambda_dash*exp(-deltap/(H+rhill))
+        print*, lambdaI(iplanet,i), deltap/AU, H/AU, rhill/AU,lambda_dash
      enddo
 
 

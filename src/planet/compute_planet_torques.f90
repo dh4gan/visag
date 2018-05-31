@@ -108,6 +108,7 @@ subroutine compute_planet_torques
 
         !fII(iplanet,i) = 1.0 ! DEBUG LINE - REMOVE!
         
+        !print*, i,fII(iplanet,i), lambdaI(iplanet,i), lambdaII(iplanet,i)
         !********************************************************
         ! Compute the total effective planet torque at this radius
         !*********************************************************

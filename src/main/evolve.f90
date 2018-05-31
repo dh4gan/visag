@@ -31,34 +31,8 @@ use winddata, only: sigdot_wind, sigdot_accrete
 
      call disc_properties
 
-     ! Determine maximum safe timestep
-
-     dtmin = 1.0d20
-     If (t .lt. 1.0d6) Then
-        C0 = 0.001d0
-     Else If (t .lt. 1.0d7) Then
-        C0 = 0.05d0
-     Else
-        C0 = 0.25d0
-     EndIf
-     C1    = 0.5d0
-
-     do i = isr, ier
-        dr  = (rf(i+1)-rf(i))
-        dr2= dr**2
-        dt  = C0 * dr2 / (6.0d0 * nu_tc(i))
-        dtmin = min(dtmin,dt)
-        dtmin = min(dtmin,0.0001*tcool(i))
-        dtmin = min(dtmin,maxstep*yr) ! timestep can not exceed maxstep
-     enddo
-
-     dt = dtmin
-    
-     !print*, t/yr, dtmin/yr, 0.001*minval(pack(tcool, tcool>0.0))/yr
-     IF(dt>tdump) then
-        print*, 'Reducing dt for rapid snapshotting'
-        dt = tdump/2.0
-     endif
+     ! Get system timestep
+     call timestep
 
      ! Set v_r = 0 outer bc
      ! This requires nu.sigma.r^{1/2} to have zero gradient
@@ -124,6 +98,11 @@ use winddata, only: sigdot_wind, sigdot_accrete
      if(.not.timestepOK) then
         print*, 'Reducing maximum allowed timestep ',maxstep, maxstep/10.0
         maxstep = maxstep/10.0
+
+        if(maxstep<1.0e-10) then
+           print*, 'MAXIMUM TIMESTEP TOO LOW: ending run'
+           stop
+        endif
      endif
 
   enddo

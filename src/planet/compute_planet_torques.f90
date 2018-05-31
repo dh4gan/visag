@@ -15,7 +15,7 @@ subroutine compute_planet_torques
   real :: rhill,H,mratio,deltap, Pcrit, typeInorm
   real :: tmig1, lambda_dash
 
-
+  call find_planets_in_disc
 
   torquei(:,:) = 0.0
   total_planet_torque(:) = 0.0
@@ -123,7 +123,8 @@ subroutine compute_planet_torques
      total_planet_torque(:) = total_planet_torque(:) + torquei(iplanet,:)
 
   enddo
-  
+
+ 
    torque_term(:) = 2.0*omegaK(:)*rz(:)*rz(:)*sigma(:)*total_planet_torque(:)
 
 end subroutine compute_planet_torques

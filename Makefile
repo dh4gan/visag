@@ -25,7 +25,7 @@ SOURCESAF90 = grav_module.f90 mri_module.f90 planet_module.f90 \
 	      calc_typeI_migration.f90 compute_planet_torques.f90 \
 	      compute_wind.f90 disc_properties.f90 \
 	      eos.f90 eosread.f90 eos_T.f90 eos_cs.f90 \
-              evolve.f90 evolve_layer.f90 \
+              evolve.f90 evolve_layer.f90 find_planets_in_disc.f90 \
 	      layer_properties.f90 midplane_properties.f90 \
 	      midplane_properties_grav.f90 midplane_properties_fixedalpha.f90 \
 	      midplane_properties_grav_fixedQ.f90  migrate_planets.f90 \

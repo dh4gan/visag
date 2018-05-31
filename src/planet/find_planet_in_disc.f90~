@@ -1,0 +1,28 @@
+subroutine find_planets_in_disc(first)
+!
+! Finds grid cell planets are in
+!
+logical,intent(in) :: first
+
+! If finding for the first time
+if(iplanetrad(iplanet)==0) then
+do iplanet=1,nplanet
+  ! Find the location of each planet in the disc
+   iplanetrad(iplanet) = isr
+
+   do while (rz(iplanetrad(iplanet))<ap(iplanet))
+      iplanetrad(iplanet) = iplanetrad(iplanet)+1
+   enddo
+
+   print*, 'Planet ', iplanet, ' located at cell ', iplanetrad(iplanet)
+   print*, 'Radius: ', rz(iplanetrad(iplanet))/AU
+
+enddo
+
+else
+
+do iplane
+
+endif
+
+end subroutine find_planets_in_disc

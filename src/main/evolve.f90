@@ -70,11 +70,11 @@ use winddata, only: sigdot_wind, sigdot_accrete
            dtorque = torque_term(i+1)- 2.0*torque_term(i) - torque_term(i)
         endif
         
-        !print*, torqueterm/(term1-term2)
+        !print*, dtorque/(term1-term2)
         vr = -3.0*term2/(rf(i)*sigma(i))
         dTcdr = (Tc(i+1) -Tc(i))*drzm1(i)
         
-        snew(i) = sigma(i) + 3.0d0*rzm1(i)*drzm1(i)*(term1-term2 +dtorque)*dt -(sigdot_wind(i)+sigdot_accrete(i))*dt
+        snew(i) = sigma(i) + rzm1(i)*drzm1(i)*(3.0*(term1-term2) +dtorque)*dt -(sigdot_wind(i)+sigdot_accrete(i))*dt
         
         if(runmode/='Q') then
            Tnew(i) = Tc(i) + 2.0*dt*(heatfunc(i)-coolfunc(i))/(cp(i)*sigma(i)) -vr*dTcdr*dt

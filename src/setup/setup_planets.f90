@@ -53,17 +53,11 @@ enddo
 mp(:) = mp(:)*mjup
 ap(:) = ap(:)*AU
 
+call find_planets_in_disc
+
 do iplanet=1,nplanet
-  ! Find the location of each planet in the disc
-   iplanetrad(iplanet) = isr
-
-   do while (rz(iplanetrad(iplanet))<ap(iplanet))
-      iplanetrad(iplanet) = iplanetrad(iplanet)+1
-   enddo
-
-   print*, 'Planet ', iplanet, ' located at cell ', iplanetrad(iplanet)
-   print*, 'Radius: ', rz(iplanetrad(iplanet))/AU
-
+      print*, 'Planet ', iplanet, 'initially located at cell ', iplanetrad(iplanet)
+      print*, 'Radius: ', rz(iplanetrad(iplanet))/AU
 enddo
 
 end subroutine setup_planets

@@ -26,9 +26,7 @@ do iplanet=1,nplanet
       adot(iplanet) = adot(iplanet) + torquei(iplanet,i)*sigma(i)/drzm1(i)
    enddo
 
-    ! Multiply by appropriate factors to get adot
-
-    !adot(iplanet) = -adot(iplanet)*4.0*pi*G*mstar/(omegaK(iplanetrad(iplanet))*mp(iplanet)*ap(iplanet))
+    ! Multiply by appropriate factors to get adot    
    adot(iplanet) = -adot(iplanet)*4.0*pi*G/(omegaK(iplanetrad(iplanet))*ap(iplanet))
     
     call calc_typeI_migration(iplanet,tmigcheck)

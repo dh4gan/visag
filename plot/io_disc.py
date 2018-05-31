@@ -128,6 +128,7 @@ def read_planets(planetfile,verbose=True):
     active = np.zeros(nplanet)
     mp = np.zeros(nplanet)
     ap = np.zeros(nplanet)
+    tmig = np.zeros(nplanet)
     
     for i in range(nplanet):
         line = f.readline()
@@ -136,11 +137,12 @@ def read_planets(planetfile,verbose=True):
         active[i] = arr[0]
         mp[i] = arr[1]
         ap[i] = arr[2]
+        tmig[i] = arr[3]
     
         if(verbose):
-            print active[i],mp[i],ap[i]
+            print active[i],mp[i],ap[i],tmig[i]
 
-    return time,nplanet,nactive, active,mp,ap
+    return time,nplanet,nactive, active,mp,ap,tmig
 
 
 def get_planet_size_and_colour(nplanet,mp):
@@ -275,7 +277,7 @@ def plot_profile_data_planets(profilefile,planetfile):
 
     time,profdata = read_profile(profilefile)
     
-    t,nplanet,nactive,active,mp,ap = read_planets(planetfile)
+    t,nplanet,nactive,active,mp,ap,tmig = read_planets(planetfile)
 
     if(np.abs(time-t)>1.0e-30):
         print "Warning: times of profile/planet files don't match"
@@ -331,20 +333,22 @@ def obtain_planet_tracks(prefix):
     '''Reads all planetary data and creates tracks for each planet'''
     planetfiles = ff.find_sorted_local_input_fileset(prefix+"*planets*")
 
-    time,nplanet,nactive,active,mp,ap = read_planets(planetfiles[0])
+    time,nplanet,nactive,active,mp,ap,tmig = read_planets(planetfiles[1])
 
-    time_all = np.zeros(len(planetfiles))
-    active_all = np.zeros((nplanet,len(planetfiles)))
-    ap_all = np.zeros((nplanet,len(planetfiles)))
-    mp_all = np.zeros((nplanet,len(planetfiles)))
+    time_all = np.zeros(len(planetfiles)-1)
+    active_all = np.zeros((nplanet,len(planetfiles)-1))
+    ap_all = np.zeros((nplanet,len(planetfiles)-1))
+    mp_all = np.zeros((nplanet,len(planetfiles)-1))
+    tmig_all= np.zeros((nplanet,len(planetfiles)-1))
     
-    for i in range(len(planetfiles)):
+    for i in range(len(planetfiles)-1):
         
-        time_all[i],nplanet,nactive,active, mp,ap = read_planets(planetfiles[i],verbose=False)
+        time_all[i],nplanet,nactive,active, mp,ap,tmig = read_planets(planetfiles[i+1],verbose=False)
         active_all[:,i] = active[:]
         mp_all[:,i] = mp[:]
         ap_all[:,i] = ap[:]
+        tmig_all[:,i] = tmig[:]
 
-    return time_all, nplanet,active_all,ap_all, mp_all
+    return time_all, nplanet,active_all,ap_all, mp_all,tmig_all
 
         

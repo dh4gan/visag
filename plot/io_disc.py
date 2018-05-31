@@ -201,6 +201,8 @@ def plot_profile_multifiles_variable(prefix, add_planets=False):
     if(add_planets):
         planetfiles = ff.find_sorted_local_input_fileset(prefix+"*planets*")
 
+    initial = initial-1
+    final = final - 1
     for i in range(initial,final):
         
         time,profdata = read_profile(filenames[i])

@@ -1,4 +1,8 @@
-# Module contains dictionaries etc to help with plotting routines
+#
+# io_disc.py
+# Contains helpful dictionaries and other global variables for plotting 
+# Also contains functions to read output files and plot data
+#
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -68,6 +72,23 @@ for i in range(nlogcol):
     logymax.append(0.0)
 
 
+# Some global variables for planet plotting
+mearth = 0.00314 # Earth mass in Jupiter masses
+
+# Minimum and maximum planet sizes (in pixels)
+minplanetsize = 50
+maxplanetsize = 200
+
+# Colours for different classes
+earthcolour = '#0099ff'
+neptunecolour = '#60b28c'
+jupitercolour = 'red'
+BDcolour = '#663300'
+
+################################
+# END OF VARIABLE DEFINITIONS
+################################
+
 
 def read_profile(profilefile):
     '''Reads profile data from file'''
@@ -122,11 +143,38 @@ def read_planets(planetfile,verbose=True):
     return time,nplanet,nactive, active,mp,ap
 
 
+def get_planet_size_and_colour(nplanet,mp):
+    '''Given a planet mass, returns a colour and size'''
+
+    planetcolours = []
+
+    planetsizes = 100*mp[:]
+
+    for i in range(nplanet):
+        if(planetsizes[i]<minplanetsize):
+            planetsizes[i]=minplanetsize
+        if(planetsizes[i]>maxplanetsize):
+            planetsizes[i]=maxplanetsize
+
+    for i in range(nplanet):
+        if(mp[i]<1.5*mearth):
+            planetcolours.append(earthcolour)
+        elif(mp[i]>1.5*mearth and mp[i]<5*mearth):
+            planetcolours.append(neptunecolour)
+        elif(mp[i]>5*mearth and mp[i]<13.0):
+            planetcolours.append(jupitercolour)
+        else:
+            planetcolours.append(BDcolour)
+
+    return planetsizes,planetcolours
+
 def read_log(logfile):
+    '''Reads the .log file'''
     return np.genfromtxt(logfile)
 
 
 def plot_profile_multifiles_variable(prefix, add_planets=False):
+    '''Reads multiple profile files and plots a specific variable'''
 
     filenames = ff.find_sorted_local_input_fileset(prefix+"*profile*")
     nfiles = len(filenames)
@@ -142,8 +190,6 @@ def plot_profile_multifiles_variable(prefix, add_planets=False):
     var = input('Which variable (1-'+str(len(profilekeys))+')? ')
 
     var = var-1
-
-
 
     if(final>nfiles):
         print "Limiting count to available files"
@@ -165,11 +211,15 @@ def plot_profile_multifiles_variable(prefix, add_planets=False):
             # Setup planet points for plotting
             xpoints = np.zeros(nplanet)
             ypoints = np.zeros(nplanet)
+
         
             if profileymin[var]!=profileymax[var]:
                 ypoints[:] = 2.0*profileymin[var]
             else:
                 ypoints[:] = 2.0*np.min(profdata[:,var])
+
+         
+            planetsizes,planetcolours = get_planet_size_and_colour(nplanet,mp)                
 
         if(profileylog[var]):
             ax.set_xscale('log')
@@ -185,7 +235,7 @@ def plot_profile_multifiles_variable(prefix, add_planets=False):
                 verticalalignment='center',transform = ax.transAxes)
 
         if(add_planets):
-            ax.scatter(ap,ypoints,s=10*mp,facecolor='red')
+            ax.scatter(ap,ypoints,s=planetsizes,facecolor=planetcolours)
 
         outputfile =profilekeys[var]+'_'+filenames[i]+'.png'
 
@@ -194,8 +244,8 @@ def plot_profile_multifiles_variable(prefix, add_planets=False):
         ax.clear()
 
 
-
 def plot_profile_data(profilefile):
+    '''Reads a given profile file and plots all variables at that snapshot'''
 
     time,profdata = read_profile(profilefile)
     
@@ -219,7 +269,8 @@ def plot_profile_data(profilefile):
     return time,profdata
 
 def plot_profile_data_planets(profilefile,planetfile):
-    
+    '''Reads a given profile file and plots all variables (and planets) at that snapshot'''
+
     time,profdata = read_profile(profilefile)
     
     t,nplanet,nactive,active,mp,ap = read_planets(planetfile)
@@ -244,6 +295,7 @@ def plot_profile_data_planets(profilefile,planetfile):
     # Setup planet points for plotting
     xpoints = np.zeros((nplanet,nprofcol))
     ypoints = np.zeros((nplanet,nprofcol))
+   
         
     for i in range(nprofcol):
         if profileymin[i]!=profileymax[i]:
@@ -251,14 +303,16 @@ def plot_profile_data_planets(profilefile,planetfile):
         else:
             ypoints[:,i] = 2.0*np.min(profdata[:,i])
 
+    planetsizes,planetcolours = get_planet_size_and_colour(nplanet,mp)
 
-    print ap, ypoints
-    multigraph_legend_points(profdata,nprofcol,profilexlabel,profilelabels,profileylog,profileymin,profileymax,profileoutputstring,legendstring,ap,ypoints,mp)
+    print ap, ypoints, planetcolours
+    multigraph_legend_points(profdata,nprofcol,profilexlabel,profilelabels,profileylog,profileymin,profileymax,profileoutputstring,legendstring,ap,ypoints,planetsizes,planetcolours)
 
     return time,profdata,nplanet,nactive,active,mp,ap
 
 
 def plot_log_data(logfile):
+    ''' Plots log file data'''
 
     logdata = read_log(logfile)
     
@@ -272,7 +326,7 @@ def plot_log_data(logfile):
 
 
 def obtain_planet_tracks(prefix):
-
+    '''Reads all planetary data and creates tracks for each planet'''
     planetfiles = ff.find_sorted_local_input_fileset(prefix+"*planets*")
 
     time,nplanet,nactive,active,mp,ap = read_planets(planetfiles[0])

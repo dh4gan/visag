@@ -5,6 +5,7 @@
 import glob
 import numpy as np
 import re
+from time import sleep
 
 def sort_nicely(l):
     """
@@ -18,11 +19,42 @@ def sort_nicely(l):
     
     l.sort(key=alphanum_key)
 
+def get_file_prefix(fileending):
+    '''Given a fileending (e.g. '.txt') returns a list of possible file prefixes
+    for the user to select'''
+
+    print 'Searching local directory for file prefixes'
+    filechoices = glob.glob(fileending)
+    filechoices = [choice.rstrip(fileending) for choice in filechoices]
+
+    # Number of matches
+    nmatch = len(filechoices)
+
+    print 'Detected ', nmatch, ' potential prefixes in this directory'
+    print 'Here are the options: '
+    for i in range (nmatch):
+        print '(',i+1,'): ', filechoices[i]
+        
+    if(nmatch>0): print 'If none of these files suit:'
+    print '(',nmatch+1,'):  Manually enter a filename'
+        
+    userselect = input('Make a selection: ')
+
+    if userselect==nmatch+1:
+        filename = raw_input('Manually enter filename: ')
+    else:
+        filename = filechoices[userselect-1]
+
+    print 'Prefix ',filename, ' selected'
+    return filename 
+
+
 def find_local_input_files(stringmatch):
     '''Given a matching string (e.g. '*.txt') the function will create a list
     of matches for the user to select (or type in an alternative)'''
     
     print 'Searching local directory for input files'
+    sleep(1.5)
     filechoices = glob.glob(stringmatch)
     
     # Number of matches
@@ -50,6 +82,7 @@ def find_sorted_local_input_files(stringmatch):
     '''Given a matching string (e.g. '*.txt') the function will create a sorted list of matches for the user to select (or type in an alternative)'''
     
     print 'Searching local directory for input files'
+    sleep(1.5)
     filechoices = glob.glob(stringmatch)
     
     # Number of matches

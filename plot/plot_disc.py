@@ -8,23 +8,26 @@ import io_disc as io
 import filefinder as ff
 from multigraph import multigraph, multigraph_legend,multigraph_legend_points
 
-nlogcol = 11
+#nlogcol = 11
 # Input file data
 
-prefix = raw_input('What is the file prefix? ')
+prefix = ff.get_file_prefix('*.log')
+
+#prefix = raw_input('What is the file prefix? ')
 
 profilefile = ff.find_sorted_local_input_files(prefix+'*profile*')
 
 # Get filenumber for plotting
 fileno = profilefile.rsplit('.',1)[1]
 
-layerchoice = raw_input('Plot layer data? (y/n) ')
+#layerchoice = raw_input('Plot layer data? (y/n) ')
 planetchoice = raw_input('Plot planet data? (y/n) ')
 
-use_layer = True
+#use_layer = True
 use_planet = True
 
-if 'y' not in layerchoice: use_layer = False
+use_layer = False
+#if 'y' not in layerchoice: use_layer = False
 if 'y' not in planetchoice: use_planet = False
 
 # Create filenames

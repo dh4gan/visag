@@ -87,7 +87,7 @@ def multigraph_legend(data,nplots,xlabel, ylabels,setylog,ymin,ymax,outputstring
     # Finish profile plots
     print 'Multigraph_legend call complete'
     
-def multigraph_legend_points(data,nplots,xlabel,ylabels,setylog,ymin,ymax,outputstring,legendstring, xpoints,ypoints,sizepoints):
+def multigraph_legend_points(data,nplots,xlabel,ylabels,setylog,ymin,ymax,outputstring,legendstring, xpoints,ypoints,sizepoints,pointcolours):
     '''Plots multiple graphs from 2D arrays with a specified legend with extra points added (circle patch)'''
     
     # Python Function takes in several inputs
@@ -130,7 +130,7 @@ def multigraph_legend_points(data,nplots,xlabel,ylabels,setylog,ymin,ymax,output
         
         yplot = np.zeros(len(xpoints))
         yplot[:] = ypoints[:,i]            
-        ax.scatter(xpoints,yplot,s=10*sizepoints,facecolor='red')
+        ax.scatter(xpoints,yplot,s=100,facecolor=pointcolours)
                             
         ax.legend()
         outputfile = outputstring[i]+'.png'

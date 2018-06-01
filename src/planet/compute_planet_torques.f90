@@ -49,7 +49,7 @@ subroutine compute_planet_torques
 
         lambdaII(iplanet,i) = 0.5*mratio*mratio/deltap**4
         if(rz(i) < ap(iplanet)) then
-           lambdaII(iplanet,i) = lambdaII(iplanet,i)*rz(i)**4
+           lambdaII(iplanet,i) = -lambdaII(iplanet,i)*rz(i)**4
         else
            lambdaII(iplanet,i) = lambdaII(iplanet,i)*ap(iplanet)**4
         endif
@@ -83,7 +83,7 @@ subroutine compute_planet_torques
         if(H>deltap) deltap =H
         if(rhill>deltap) deltap=rhill
 
-        lambdaI(iplanet,i) = lambda_dash*exp(-deltap/(H+rhill))        
+        lambdaI(iplanet,i) = -lambda_dash*exp(-deltap/(H+rhill))        
        
      enddo
 
@@ -106,9 +106,9 @@ subroutine compute_planet_torques
 
         if(fII(iplanet,i) > 1.0) fII(iplanet,i)=1.0
 
-        !fII(iplanet,i) = 1.0 ! DEBUG LINE - REMOVE!
+        fII(iplanet,i) = 1.0 ! DEBUG LINE - REMOVE!
         
-        !print*, i,fII(iplanet,i), lambdaI(iplanet,i), lambdaII(iplanet,i)
+        !print*, i,Pcrit,fII(iplanet,i), lambdaI(iplanet,i), lambdaII(iplanet,i)
         !********************************************************
         ! Compute the total effective planet torque at this radius
         !*********************************************************

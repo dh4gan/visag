@@ -124,7 +124,7 @@ endif
   mstar = mstar*solarmass
   mdisk = mdisk*solarmass
 
-  maxstep = 10.0 ! Maximum allowed timestep (in years)
+  maxstep = 1.0 ! Maximum allowed timestep (in years)
 
 ! Allocate arrays
 

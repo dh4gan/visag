@@ -18,7 +18,7 @@ real(kind=8) :: dtmin,C0,C1,dr2,dr
 
 dtmin = 1.0d20
 If (t .lt. 1.0d6) Then
-   C0 = 0.001d0
+   C0 = 0.01d0
 Else If (t .lt. 1.0d7) Then
    C0 = 0.05d0
 Else
@@ -31,7 +31,7 @@ do i = isr, ier
    dr2= dr**2
    dt  = C0 * dr2 / (6.0d0 * nu_tc(i))
    dtmin = min(dtmin,dt)
-   dtmin = min(dtmin,0.01*tcool(i))
+   dtmin = min(dtmin,0.001*tcool(i))
    dtmin = min(dtmin,maxstep*yr) ! timestep can not exceed maxstep
 enddo
 

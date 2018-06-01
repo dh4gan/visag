@@ -31,9 +31,14 @@ do iplanet=1,nplanet
     
     call calc_typeI_migration(iplanet,tmigcheck)
     ! get overall migration timescale
+
+    if(abs(adot(iplanet))>1.0e-30) then
     tmig(iplanet) = ap(iplanet)/abs(adot(iplanet))
+    else
+    tmig(iplanet) = 0.0
+    endif
        
-    print*,iplanet,dt/yr, ap(iplanet)/AU, tmig(iplanet)/yr, tmigcheck/yr
+    !print*,t/yr,iplanet,dt/yr, ap(iplanet)/AU, tmig(iplanet)/yr, tmigcheck/yr
 
     if(tmigcheck<0.0) then
        print*, 'NEGATIVE TMIG1'

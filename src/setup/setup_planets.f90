@@ -25,7 +25,7 @@ nactive = nplanet
 
 allocate(mp(nplanet),ap(nplanet),alive(nplanet), iplanetrad(nplanet))
 allocate(lambdaI(nplanet,nmax), lambdaII(nplanet,nmax))
-allocate(fII(nplanet,nmax))
+allocate(fII(nplanet))
 allocate(adot(nplanet),tmig(nplanet),tmigI(nplanet))
 allocate(torquei(nplanet,nmax), torque_term(nmax), total_planet_torque(nmax))
 
@@ -37,7 +37,7 @@ iplanetrad(:) = 0
 
 lambdaII(:,:) = 0.0
 lambdaI(:,:) = 0.0
-fII(:,:) = 0.0
+fII(:) = 0.0
 adot(:) = 0.0
 tmig(:) = 0.0
 tmigI(:) = 0.0

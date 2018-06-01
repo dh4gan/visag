@@ -43,15 +43,14 @@ subroutine compute_planet_torques
         deltap = abs(rz(i)-ap(iplanet))
         H = cs(i)/omegaK(i)        
 
-        if(H>deltap) deltap =H
-
-        if(rhill>deltap) deltap=rhill
+        if(deltap<H) deltap =H
+        if(deltap<rhill) deltap=rhill
 
         lambdaII(iplanet,i) = 0.5*mratio*mratio/deltap**4
         if(rz(i) < ap(iplanet)) then
            lambdaII(iplanet,i) = -lambdaII(iplanet,i)*rz(i)**4
         else
-           lambdaII(iplanet,i) = lambdaII(iplanet,i)*ap(iplanet)**4
+           lambdaII(iplanet,i) = -lambdaII(iplanet,i)*ap(iplanet)**4
         endif
 
         !*************************************
@@ -62,7 +61,9 @@ subroutine compute_planet_torques
         ! to obtain the correct Type I migration timescale
            
         ! Integrate the torque over all radii
-        typeInorm = typeInorm + exp(-deltap/(H+rhill))*sigma(i)/drzm1(i)        
+        typeInorm = typeInorm + exp(-deltap/(H+rhill))*sigma(i)/drzm1(i)
+
+    !print*, iplanet, i,iplanetrad(iplanet), lambdaII(iplanet,i)
 
      enddo
 
@@ -73,15 +74,21 @@ subroutine compute_planet_torques
 
      !lambda_dash = mratio*omegaK(iplanetrad(iplanet))*ap(iplanet)*ap(iplanet)/(4.0*pi*G*tmig1*typeInorm)
 
-     lambda_dash = ap(iplanet)*ap(iplanet)*omegaK(iplanetrad(iplanet))/(4.0*pi*G*tmig1*typeInorm)
+     if(tmig1 > 1.0e-30) then
+        lambda_dash = ap(iplanet)*ap(iplanet)*omegaK(iplanetrad(iplanet))/(4.0*pi*G*tmig1*typeInorm)
+      else
+        lambda_dash = 0.0
+      endif
 
      ! Now compute functional form of lambda 
      ! (assuming concentration of torque in planet local vicinity)
      do i=isr,ier
+
         deltap = abs(rz(i)-ap(iplanet))
-        H = cs(i)/omegaK(i)  
-        if(H>deltap) deltap =H
-        if(rhill>deltap) deltap=rhill
+        H = cs(i)/omegaK(i)
+
+        if(deltap<H) deltap =H
+        if(deltap<rhill) deltap=rhill
 
         lambdaI(iplanet,i) = -lambda_dash*exp(-deltap/(H+rhill))        
        
@@ -92,30 +99,20 @@ subroutine compute_planet_torques
      ! Now compute the relative dominance of each torque 
      !**************************************************
 
-     do i= isr,ier
+     H = cs(iplanetrad(iplanet))/omegaK(iplanetrad(iplanet))
+     Pcrit = 0.75 * H/rhill + 50.0*alpha_g(iplanetrad(iplanet))*(H/ap(iplanet))**2/mratio
 
-        !*****************************************************
-        ! Compute the interpolative factor f between migration regimes
-        !******************************************************
+     fII(iplanet) = exp(-Pcrit+1.0)
+     if(fII(iplanet) > 1.0) fII(iplanet)=1.0
 
-        ! Pressure criterion for Type I/ Type II
-
-        Pcrit = 0.75 * H/rhill + 50.0*alpha_g(i)*(H/ap(iplanet))**2/mratio
-
-        fII(iplanet,i) = exp(-Pcrit+1.0)
-
-        if(fII(iplanet,i) > 1.0) fII(iplanet,i)=1.0
-
-        fII(iplanet,i) = 1.0 ! DEBUG LINE - REMOVE!
+     fII(iplanet) = 0.0 ! DEBUG LINE - REMOVE!
         
-        !print*, i,Pcrit,fII(iplanet,i), lambdaI(iplanet,i), lambdaII(iplanet,i)
-        !********************************************************
-        ! Compute the total effective planet torque at this radius
-        !*********************************************************
+      !print*, iplanet,-Pcrit+1.0,fII(iplanet)
+      !********************************************************
+      ! Compute the total effective planet torque at this radius
+      !*********************************************************
 
-        torquei(iplanet,i) = lambdaI(iplanet,i)*(1.0-fII(iplanet,i)) + lambdaII(iplanet,i)*fII(iplanet,i)
-
-     enddo
+torquei(iplanet,:) = lambdaI(iplanet,:)*(1.0-fII(iplanet)) + lambdaII(iplanet,:)*fII(iplanet)
 
 
      ! Add planet contribution to the total torque exerted on the disc

@@ -116,6 +116,7 @@ endif
   rin = rin*AU
   rout = rout*AU
   rmax = rmax *AU
+  rremove = rremove*AU
   zmax = zmax*AU
 
   trun = trun*yr

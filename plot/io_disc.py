@@ -210,7 +210,7 @@ def plot_profile_multifiles_variable(prefix, add_planets=False):
         time,profdata = read_profile(filenames[i])
         
         if(add_planets):
-            t,nplanet,nactive, active,mp,ap = read_planets(planetfiles[i],verbose=False)
+            t,nplanet,nactive, active,mp,ap,tmig = read_planets(planetfiles[i],verbose=False)
 
             # Setup planet points for plotting
             xpoints = np.zeros(nplanet)
@@ -265,7 +265,7 @@ def plot_profile_data(profilefile):
 
     # Legend Label
     for i in range(nprofcol):
-        legendstring.append('Time = '+str(time)+' yr')
+        legendstring.append('t = '+str(np.round(time,2))+' yr',)
 
 
     multigraph_legend(profdata,nprofcol,profilexlabel,profilelabels,profileylog,profileymin,profileymax,profileoutputstring,legendstring)
@@ -294,7 +294,7 @@ def plot_profile_data_planets(profilefile,planetfile):
     
     # Legend Label
     for i in range(nprofcol):
-        legendstring.append('Time = '+str(time)+' yr')
+        legendstring.append('t = '+str(np.round(time,2))+' yr',)
 
     # Setup planet points for plotting
     xpoints = np.zeros((nplanet,nprofcol))

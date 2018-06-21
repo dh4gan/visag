@@ -50,7 +50,7 @@ subroutine compute_planet_torques
         if(rz(i) < ap(iplanet)) then
            lambdaII(iplanet,i) = -lambdaII(iplanet,i)*rz(i)**4
         else
-           lambdaII(iplanet,i) = -lambdaII(iplanet,i)*ap(iplanet)**4
+           lambdaII(iplanet,i) = lambdaII(iplanet,i)*ap(iplanet)**4
         endif
 
         !*************************************
@@ -61,18 +61,19 @@ subroutine compute_planet_torques
         ! to obtain the correct Type I migration timescale
            
         ! Integrate the torque over all radii
-        typeInorm = typeInorm + exp(-deltap/(H+rhill))*sigma(i)/drzm1(i)
 
-    !print*, iplanet, i,iplanetrad(iplanet), lambdaII(iplanet,i)
-
+        if(rz(i)<ap(iplanet)) then
+           typeInorm = typeInorm - exp(-deltap/(H+rhill))*sigma(i)/drzm1(i)    
+        else
+           typeInorm = typeInorm + exp(-deltap/(H+rhill))*sigma(i)/drzm1(i)    
+        endif
+       
      enddo
 
      ! Compute Type I migration timescale
      call calc_typeI_migration(iplanet,tmig1)
 
      ! Find normalisation constant to ensure correct Type I timescale
-
-     !lambda_dash = mratio*omegaK(iplanetrad(iplanet))*ap(iplanet)*ap(iplanet)/(4.0*pi*G*tmig1*typeInorm)
 
      if(tmig1 > 1.0e-30) then
         lambda_dash = ap(iplanet)*ap(iplanet)*omegaK(iplanetrad(iplanet))/(4.0*pi*G*tmig1*typeInorm)
@@ -90,7 +91,9 @@ subroutine compute_planet_torques
         if(deltap<H) deltap =H
         if(deltap<rhill) deltap=rhill
 
-        lambdaI(iplanet,i) = -lambda_dash*exp(-deltap/(H+rhill))        
+        lambdaI(iplanet,i) = lambda_dash*exp(-deltap/(H+rhill))
+
+        if(rz(i)<ap(iplanet)) lambdaI(iplanet,i) = -lambdaI(iplanet,i)
        
      enddo
 
@@ -102,17 +105,20 @@ subroutine compute_planet_torques
      H = cs(iplanetrad(iplanet))/omegaK(iplanetrad(iplanet))
      Pcrit = 0.75 * H/rhill + 50.0*alpha_g(iplanetrad(iplanet))*(H/ap(iplanet))**2/mratio
 
+     
+
      fII(iplanet) = exp(-Pcrit+1.0)
      if(fII(iplanet) > 1.0) fII(iplanet)=1.0
 
-     fII(iplanet) = 0.0 ! DEBUG LINE - REMOVE!
-        
-      !print*, iplanet,-Pcrit+1.0,fII(iplanet)
+     !fII(iplanet) = 0.0 ! DEBUG LINE - REMOVE!
+
+      print*, 'Desired migration rate: ', t/yr, tmig1/yr, Pcrit, fII(iplanet)
+ 
       !********************************************************
       ! Compute the total effective planet torque at this radius
       !*********************************************************
 
-torquei(iplanet,:) = lambdaI(iplanet,:)*(1.0-fII(iplanet)) + lambdaII(iplanet,:)*fII(iplanet)
+     torquei(iplanet,:) = lambdaI(iplanet,:)*(1.0-fII(iplanet)) + lambdaII(iplanet,:)*fII(iplanet)
 
 
      ! Add planet contribution to the total torque exerted on the disc
@@ -121,7 +127,6 @@ torquei(iplanet,:) = lambdaI(iplanet,:)*(1.0-fII(iplanet)) + lambdaII(iplanet,:)
 
   enddo
 
- 
    torque_term(:) = 2.0*omegaK(:)*rz(:)*rz(:)*sigma(:)*total_planet_torque(:)
 
 end subroutine compute_planet_torques

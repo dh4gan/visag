@@ -12,6 +12,7 @@ module unitdata
   real(kind=8), parameter :: AU = 1.496e13	 ! AU
   real(kind=8), parameter :: yr = 3.15e7	 ! year
   real(kind=8), parameter :: solarmass = 1.99e33 ! solar mass
+  real(kind=8), parameter :: mearth = 5.972e27
   real(kind=8), parameter :: mjup = 1.898e30 ! Jupiter mass
   real(kind=8), parameter :: msolyr = solarmass/yr
 

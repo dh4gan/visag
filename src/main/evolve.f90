@@ -13,7 +13,7 @@ use winddata, only: sigdot_wind, sigdot_accrete
 
   real(kind=8) :: dtmin,C0,C1,dr2,dr
   real(kind=8) :: tot_lumin,term1,term2
-  real :: dtorque, dTcdr, vr
+  real :: dtorque, dTcdr, vr, dt_torque
   logical :: timestepOK
 
   integer :: i,j,k
@@ -65,13 +65,15 @@ use winddata, only: sigdot_wind, sigdot_accrete
         term1=rf1_2(i+1)*(nu_tc(i+1)*sigma(i+1)*rz1_2(i+1)-nu_tc(i)*sigma(i)*rz1_2(i))*drfm1(i+1)
         term2=rf1_2(i)*(nu_tc(i)*sigma(i)*rz1_2(i)-nu_tc(i-1)*sigma(i-1)*rz1_2(i-1))*drfm1(i)
         
+
+
         dtorque = 0.0
         if(planetchoice=='y') then
-           dtorque = torque_term(i+1)- 2.0*torque_term(i) - torque_term(i)
-        endif
-        
-        !print*, dtorque/(term1-term2)
+           dtorque = torque_term(i+1)- 2.0*torque_term(i) + torque_term(i)
+        endif                
+
         vr = -3.0*term2/(rf(i)*sigma(i))
+
         dTcdr = (Tc(i+1) -Tc(i))*drzm1(i)
         
         snew(i) = sigma(i) + rzm1(i)*drzm1(i)*(3.0*(term1-term2) - dtorque)*dt -(sigdot_wind(i)-sigdot_accrete(i))*dt
@@ -120,11 +122,11 @@ use winddata, only: sigdot_wind, sigdot_accrete
   !$OMP END DO
   !$OMP END PARALLEL
 
-
    if(planetchoice=='y') then
     ! Move planets
     call migrate_planets
 endif
 
+!STOP
   return
 end subroutine evolve

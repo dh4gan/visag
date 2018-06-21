@@ -74,6 +74,12 @@ close(iprof)
 endif
 
 
+open(75,file=TRIM(prefix)//'_torque.'//fileno,status='unknown')
+do i=isr,ier
+   write(75,*) rz(i)/AU, lambdaI(1,i), lambdaII(1,i), total_planet_torque(i)
+enddo
+close(75)
+
 ! Compute disk mass and maximum surface density
 ! Also compute radially averaged accretion rates
 

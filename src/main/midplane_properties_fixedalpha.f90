@@ -65,9 +65,12 @@
         EndIf
 
      ELSE
-        Tc(i) = 0.0
+        Tc(i) = 0.0       
+        mu(i) = 0.0
         cs(i) = 0.0
         kappa(i) = 0.0
+        Q(i) = 0.0
+        tau(i) = 0.0
         mu(i) = 0.0
         gamma(i) = 0.0
         tcool(i) = 1.0d35

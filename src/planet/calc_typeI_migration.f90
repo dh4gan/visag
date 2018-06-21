@@ -19,10 +19,12 @@ subroutine calc_typeI_migration(iplanet, tmig1)
 
   mdiscmig = pi*ap(iplanet)*ap(iplanet)*sigma(iplanetrad(iplanet))
 
-  !tmig1 = mstar*mstar*aspectratio*aspectratio/(mdiscmig*mp(iplanet)*omegaK(iplanetrad(iplanet)))
+  print*, mdiscmig, sigma(iplanetrad(iplanet))
+  ! Baruteau et al (2013) expression
+  tmig1 = mstar*mstar*aspectratio*aspectratio/(mdiscmig*mp(iplanet)*omegaK(iplanetrad(iplanet)))
 
-  tmig1 = aspectratio*mstar/(mp(iplanet)*omegaK(iplanetrad(iplanet)))
-
-  !print*, iplanetrad(iplanet),tmig1/yr, aspectratio,mp/mstar, mdiscmig/mstar, sigma(iplanetrad(iplanet))
+  ! Old Bate et al expression
+  !tmig1 = aspectratio*mstar/(mp(iplanet)*omegaK(iplanetrad(iplanet)))
   
+
 end subroutine calc_typeI_migration

@@ -347,7 +347,8 @@ sigdot_accrete(:)= 0.0 ! Accretion turned off for now
   print*, 'Calculating other disc properties'
   call disc_properties
 
-
+  nplanet = 0
+  nactive = 0
   if(planetchoice=='y') then
     print*, 'Setting up planets'
     call setup_planets

@@ -13,7 +13,7 @@ subroutine compute_planet_torques
 
   integer :: iplanet,i
   real :: rhill,H,mratio,deltap, Pcrit, typeInorm
-  real :: tmig1, lambda_dash
+  real :: tmig1, lambda_dash, aspectratio
 
   call find_planets_in_disc
 
@@ -112,7 +112,7 @@ subroutine compute_planet_torques
 
      !fII(iplanet) = 0.0 ! DEBUG LINE - REMOVE!
 
-      print*, 'Desired migration rate: ', t/yr, tmig1/yr, Pcrit, fII(iplanet)
+      !print*, 'Desired migration rate: ', t/yr, tmig1/yr, Pcrit, fII(iplanet)
  
       !********************************************************
       ! Compute the total effective planet torque at this radius
@@ -120,12 +120,22 @@ subroutine compute_planet_torques
 
      torquei(iplanet,:) = lambdaI(iplanet,:)*(1.0-fII(iplanet)) + lambdaII(iplanet,:)*fII(iplanet)
 
-
      ! Add planet contribution to the total torque exerted on the disc
 
      total_planet_torque(:) = total_planet_torque(:) + torquei(iplanet,:)
 
   enddo
+
+  ! Ensure torque magnitude does not exceed maximum permitted value
+  ! (Alexander & Armitage 2009, ApJ, 704, 989)
+
+  do i=isr,ier
+     aspectratio = cs(i)/(rz(i)*omegaK(i))
+     if(abs(total_planet_torque(i)) > 0.1*aspectratio) then
+        total_planet_torque(i) = 0.1*aspectratio*total_planet_torque(i)/abs(total_planet_torque(i))
+     endif
+  enddo
+     
 
    torque_term(:) = 2.0*omegaK(:)*rz(:)*rz(:)*sigma(:)*total_planet_torque(:)
 

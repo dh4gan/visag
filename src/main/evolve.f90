@@ -74,8 +74,8 @@ use winddata, only: sigdot_wind, sigdot_accrete
 
         vr = -3.0*term2/(rf(i)*sigma(i))
 
-        dTcdr = (Tc(i+1) -Tc(i))*drzm1(i)
-        
+        dTcdr = (Tc(i+1) -Tc(i))*drzm1(i)   
+
         snew(i) = sigma(i) + rzm1(i)*drzm1(i)*(3.0*(term1-term2) - dtorque)*dt -(sigdot_wind(i)-sigdot_accrete(i))*dt
         
         if(snew(i)<0.0) snew(i) = 0.0

@@ -39,6 +39,14 @@ for i in range(nprofcol):
 profileymin[1] = 1.0e1
 profileymax[1] = 1.0e6
 
+#cs
+profileymin[2] = 1.0e1
+profileymax[2] = 1.0e7
+
+#kappa
+profileymin[3] = 1.0e-10
+profileymax[3] = 1.0e5
+
 # alpha
 profileymin[9] = 1.0e-5
 profileymax[9] = 1.0e0
@@ -99,7 +107,7 @@ def read_profile(profilefile):
     
     f.close()
     time = arr[0]
-    ngrid = int(arr[1])
+    ngrid = int(arr[1])    
     
     print 'Reading file ',profilefile
     print 'Time: '+str(time)+ ' yr'

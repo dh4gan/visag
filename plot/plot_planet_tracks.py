@@ -30,7 +30,7 @@ fig2 = plt.figure()
 ax2 = fig2.add_subplot(111)
 
 ax2.set_ylim(amin(tmig[:,:])*0.9,amax(tmig[:,:])*1.1)
-ax2.set_yscale('log')
+#ax2.set_yscale('log')
 
 for i in range(nplanet):
     ax2.plot(time,tmig[i,:], label='Planet '+str(i+1))

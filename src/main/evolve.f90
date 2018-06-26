@@ -69,14 +69,18 @@ use winddata, only: sigdot_wind, sigdot_accrete
 
         dtorque = 0.0
         if(planetchoice=='y') then
-           dtorque = torque_term(i+1)- 2.0*torque_term(i) + torque_term(i)
+           !dtorque = torque_term(i+1)- 2.0*torque_term(i) + torque_term(i)
+           dtorque = torque_term(i+1)-torque_term(i)
         endif                
 
-        vr = -3.0*term2/(rf(i)*sigma(i))
+        vr = -3.0*(term2)/(rf(i)*sigma(i))
 
         dTcdr = (Tc(i+1) -Tc(i))*drzm1(i)   
 
+       ! write(*,'(4(1pe15.5,2X))') rz(i)/AU, dtorque, (3.0*(term1-term2)), dtorque/(3.0*(term1-term2))
+
         snew(i) = sigma(i) + rzm1(i)*drzm1(i)*(3.0*(term1-term2) - dtorque)*dt -(sigdot_wind(i)-sigdot_accrete(i))*dt
+        !write(*,'(3(1pe15.5,2X))') rz(i)/AU, 3.0*(term1-term2)/dtorque
         
         if(snew(i)<0.0) snew(i) = 0.0
         if(runmode/='Q') then

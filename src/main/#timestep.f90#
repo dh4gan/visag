@@ -26,7 +26,7 @@ Else
 EndIf
 C1 = 0.5d0
 
-C0 = C0/1000.0
+C0 = C0/10.0
 
 do i = isr, ier
    dr  = (rf(i+1)-rf(i))

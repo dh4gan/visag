@@ -15,7 +15,7 @@ module gravdata
 
   ! Disc state variables (zone centred)
   real, allocatable, dimension(:) :: sigma, nu_tc, Tc, tau,omegaK,snew
-  real, allocatable, dimension(:) :: cs, kappa, mu,gamma, tcool, alpha_g
+  real, allocatable, dimension(:) :: cs, kappa, mu,gamma, tcool, alpha_g, H
   real,allocatable, dimension(:) :: T_source, sigdot,coolfunc,Q,Tnew,cp,heatfunc
   real, dimension(2,1000) :: spectrum
 

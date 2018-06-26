@@ -12,13 +12,14 @@ subroutine compute_planet_torques
 
 
   integer :: iplanet,i
-  real :: rhill,H,mratio,deltap, Pcrit, typeInorm
+  real :: rhill,mratio,deltap, Pcrit, typeInorm
   real :: tmig1, lambda_dash, aspectratio
 
   call find_planets_in_disc
 
   torquei(:,:) = 0.0
   total_planet_torque(:) = 0.0
+  torque_term(:) = 0.0
 
   ! Loop over each planet
   do iplanet =1,nplanet
@@ -40,10 +41,9 @@ subroutine compute_planet_torques
         ! Compute the Type II specific torque at this radius
         !*****************************************************
 
-        deltap = abs(rz(i)-ap(iplanet))
-        H = cs(i)/omegaK(i)        
+        deltap = abs(rz(i)-ap(iplanet))  
 
-        if(deltap<H) deltap =H
+        if(deltap<H(i)) deltap =H(i)
         if(deltap<rhill) deltap=rhill
 
         lambdaII(iplanet,i) = 0.5*mratio*mratio/deltap**4
@@ -63,9 +63,9 @@ subroutine compute_planet_torques
         ! Integrate the torque over all radii
 
         if(rz(i)<ap(iplanet)) then
-           typeInorm = typeInorm - exp(-deltap/(H+rhill))*sigma(i)/drzm1(i)    
+           typeInorm = typeInorm + exp(-deltap/(H(i)+rhill))*sigma(i)/drzm1(i)    
         else
-           typeInorm = typeInorm + exp(-deltap/(H+rhill))*sigma(i)/drzm1(i)    
+           typeInorm = typeInorm + exp(-deltap/(H(i)+rhill))*sigma(i)/drzm1(i)    
         endif
        
      enddo
@@ -86,14 +86,13 @@ subroutine compute_planet_torques
      do i=isr,ier
 
         deltap = abs(rz(i)-ap(iplanet))
-        H = cs(i)/omegaK(i)
 
-        if(deltap<H) deltap =H
+        if(deltap<H(i)) deltap =H(i)
         if(deltap<rhill) deltap=rhill
 
-        lambdaI(iplanet,i) = lambda_dash*exp(-deltap/(H+rhill))
+        lambdaI(iplanet,i) = lambda_dash*exp(-deltap/(H(i)+rhill))
 
-        if(rz(i)<ap(iplanet)) lambdaI(iplanet,i) = -lambdaI(iplanet,i)
+        !if(rz(i)<ap(iplanet)) lambdaI(iplanet,i) = -lambdaI(iplanet,i)
        
      enddo
 
@@ -102,15 +101,14 @@ subroutine compute_planet_torques
      ! Now compute the relative dominance of each torque 
      !**************************************************
 
-     H = cs(iplanetrad(iplanet))/omegaK(iplanetrad(iplanet))
-     Pcrit = 0.75 * H/rhill + 50.0*alpha_g(iplanetrad(iplanet))*(H/ap(iplanet))**2/mratio
+     Pcrit = 0.75 * H(iplanetrad(iplanet))/rhill + 50.0*alpha_g(iplanetrad(iplanet))*(H(iplanetrad(iplanet))/ap(iplanet))**2/mratio
 
      
 
      fII(iplanet) = exp(-Pcrit+1.0)
      if(fII(iplanet) > 1.0) fII(iplanet)=1.0
 
-     !fII(iplanet) = 0.0 ! DEBUG LINE - REMOVE!
+     fII(iplanet) = 1.0 ! DEBUG LINE - REMOVE!
 
       !print*, 'Desired migration rate: ', t/yr, tmig1/yr, Pcrit, fII(iplanet)
  
@@ -130,9 +128,12 @@ subroutine compute_planet_torques
   ! (Alexander & Armitage 2009, ApJ, 704, 989)
 
   do i=isr,ier
-     aspectratio = cs(i)/(rz(i)*omegaK(i))
+     aspectratio = H(i)/rz(i)
+
      if(abs(total_planet_torque(i)) > 0.1*aspectratio) then
         total_planet_torque(i) = 0.1*aspectratio*total_planet_torque(i)/abs(total_planet_torque(i))
+
+        !print*, rz(i)/AU, aspectratio, total_planet_torque(i)
      endif
   enddo
      

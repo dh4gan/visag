@@ -8,7 +8,7 @@
     
     real,dimension(nmax) :: tauplus
     real(kind=8) :: twoDint,fine,oldtry
-    real(kind=8) :: rho,H, Teff
+    real(kind=8) :: rho, Teff
     integer :: i
 
     coolfunc(:) = 0.0
@@ -24,13 +24,12 @@
      omegaK(i) = Sqrt(G*mstar/rz(i)**3.0d0)
 
      IF(Tc(i) < T_source(i)) Tc(i) = T_source(i)
-     cs(i) = gamma(i)*k_B*Tc(i)/(mu(i)*m_H)
+     cs(i) = sqrt(gamma(i)*k_B*Tc(i)/(mu(i)*m_H))
 
-     cs(i) = sqrt(cs(i))
-     H = cs(i)/omegaK(i)
+     H(i) = cs(i)/omegaK(i)
 
-     IF(H/=0.0) THEN
-        rho = 0.5d0*sigma(i)/H
+     IF(H(i)>1.0e-30) THEN
+        rho = 0.5d0*sigma(i)/H(i)
      ELSE
         rho = 0.0
      ENDIF
@@ -65,14 +64,14 @@
         EndIf
 
      ELSE
-        Tc(i) = 0.0       
-        mu(i) = 0.0
-        cs(i) = 0.0
+        Tc(i) = T_source(i)     
+        mu(i) = 2.4
+        gamma(i) = 1.666
+        cs(i) = sqrt(gamma(i)*k_B*Tc(i)/(mu(i)*m_H))
+        H(i) = cs(i)/omegaK(i)
         kappa(i) = 0.0
         Q(i) = 0.0
-        tau(i) = 0.0
-        mu(i) = 0.0
-        gamma(i) = 0.0
+        tau(i) = 0.0                
         tcool(i) = 1.0d35
         coolfunc(i) = 0.0
      ENDIF

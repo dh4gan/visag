@@ -9,7 +9,7 @@
     
     real,dimension(nmax) :: tauplus
     real(kind=8) :: twoDint,fine,oldtry
-    real(kind=8) :: rho,H, Teff,Qfactor
+    real(kind=8) :: rho, Teff,Qfactor
     integer :: i
 
     coolfunc(:) = 0.0
@@ -28,10 +28,10 @@
      cs(i) = gamma(i)*k_B*Tc(i)/(mu(i)*m_H)
 
      cs(i) = sqrt(cs(i))
-     H = cs(i)/omegaK(i)
+     H(i) = cs(i)/omegaK(i)
 
-     IF(H/=0.0) THEN
-        rho = 0.5d0*sigma(i)/H
+     IF(H(i)>1.0e-30) THEN
+        rho = 0.5d0*sigma(i)/H(i)
      ELSE
         rho = 0.0
      ENDIF

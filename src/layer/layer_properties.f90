@@ -11,7 +11,7 @@ SUBROUTINE layer_properties
 
   real(kind=8) :: coolfunclayer, twoDint,fine,oldtry
   real(kind=8) :: Teff,temp1,temp2,sig1,sig2
-  real(kind=8) :: H, rho,Tnewlayer,heat,cool
+  real(kind=8) :: rho,Tnewlayer,heat,cool
 
   real(kind=8) :: try,T_try,rho_m, alpha_max,tcool_target
 

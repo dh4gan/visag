@@ -77,7 +77,11 @@ use winddata, only: sigdot_wind, sigdot_accrete
 
         dTcdr = (Tc(i+1) -Tc(i))*drzm1(i)   
 
-       ! write(*,'(4(1pe15.5,2X))') rz(i)/AU, dtorque, (3.0*(term1-term2)), dtorque/(3.0*(term1-term2))
+        if(t> 100.0*yr) then
+        write(75,'(7(1pe15.5,2X))') rz(i)/AU, dtorque, H(i)/AU, torque_term(i), &
+             3.0*(term1-term2), rzm1(i)*drzm1(i)*(3.0*(term1-term2) - dtorque)*dt
+
+     endif
 
         snew(i) = sigma(i) + rzm1(i)*drzm1(i)*(3.0*(term1-term2) - dtorque)*dt -(sigdot_wind(i)-sigdot_accrete(i))*dt
         !write(*,'(3(1pe15.5,2X))') rz(i)/AU, 3.0*(term1-term2)/dtorque
@@ -131,6 +135,7 @@ use winddata, only: sigdot_wind, sigdot_accrete
     call migrate_planets
 endif
 
-!STOP
+
+if(t>100.0*yr) STOP
   return
 end subroutine evolve

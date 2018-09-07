@@ -9,12 +9,13 @@ subroutine timestep
 
 use gravdata
 use unitdata, only: yr,tdump
+use planetdata, only: total_planet_torque
 
 implicit none
 
 integer :: i
 real(kind=8) :: dtmin,C0,C1,dr2,dr
-
+real :: dttorq, dttorq_try
 
 dtmin = 1.0d20
 If (t .lt. 1.0d6) Then
@@ -28,18 +29,27 @@ C1 = 0.5d0
 
 !C0 = C0/1000.0
 
+dttorq = 1.0e30
+
 do i = isr, ier
    dr  = (rf(i+1)-rf(i))
    dr2= dr**2
    dt  = C0 * dr2 / (6.0d0 * nu_tc(i))
    dtmin = min(dtmin,dt)
-   dtmin = min(dtmin,0.001*tcool(i))
+   !dtmin = min(dtmin,0.001*tcool(i))
    dtmin = min(dtmin,maxstep*yr) ! timestep can not exceed maxstep
+
+   dttorq_try = C0*dr/(omegaK(i)*rf(i)*abs(total_planet_torque(i)))
+
+   dttorq = min(dttorq, dttorq_try)
+
+   
+
 enddo
 
 dt = dtmin
     
-!print*, t/yr, dtmin/yr, 0.001*minval(pack(tcool, tcool>0.0))/yr
+!print*, t/yr, dtmin/yr, dttorq/yr, dtmin/dttorq
 IF(dt>tdump) then
    print*, 'Reducing dt for rapid snapshotting'
    dt = tdump/10.0

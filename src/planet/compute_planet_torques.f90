@@ -42,7 +42,7 @@ subroutine compute_planet_torques
         !*****************************************************
 
         deltap = abs(rz(i)-ap(iplanet))  
-
+        
         if(deltap<H(i)) deltap =H(i)
         if(deltap<rhill) deltap=rhill
 
@@ -130,11 +130,11 @@ subroutine compute_planet_torques
   do i=isr,ier
      aspectratio = H(i)/rz(i)
 
-     if(abs(total_planet_torque(i)) > 0.1*aspectratio) then
-        total_planet_torque(i) = 0.1*aspectratio*total_planet_torque(i)/abs(total_planet_torque(i))
+!     if(abs(total_planet_torque(i)) > 0.1*aspectratio) then
+!        total_planet_torque(i) = 0.1*aspectratio*total_planet_torque(i)/abs(total_planet_torque(i))
 
         !print*, rz(i)/AU, aspectratio, total_planet_torque(i)
-     endif
+    ! endif
   enddo
      
 

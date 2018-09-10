@@ -13,7 +13,8 @@ subroutine compute_planet_torques
 
   integer :: iplanet,i
   real :: rhill,mratio,deltap, Pcrit, typeInorm
-  real :: tmig1, lambda_dash, aspectratio
+  real :: tmig1, lambda_dash, deltamax,aspectratio
+  logical :: soften
 
   call find_planets_in_disc
 
@@ -42,15 +43,28 @@ subroutine compute_planet_torques
         !*****************************************************
 
         deltap = abs(rz(i)-ap(iplanet))  
-        
-        if(deltap<H(i)) deltap =H(i)
-        if(deltap<rhill) deltap=rhill
 
-        lambdaII(iplanet,i) = 0.5*mratio*mratio/deltap**4
+        deltamax = H(i)
+
+        soften = .false.
+        if(rhill>deltamax) deltamax = rhill
+        
+        if(deltap<deltamax) then
+           deltap =deltamax
+           soften = .true.
+        endif
+
+        lambdaII(iplanet,i) = 0.5*mratio*mratio/(deltap)**4
         if(rz(i) < ap(iplanet)) then
-           lambdaII(iplanet,i) = -lambdaII(iplanet,i)*rz(i)**4
+           lambdaII(iplanet,i) = -lambdaII(iplanet,i)*(rz(i))**4
         else
-           lambdaII(iplanet,i) = lambdaII(iplanet,i)*ap(iplanet)**4
+           lambdaII(iplanet,i) = lambdaII(iplanet,i)*(ap(iplanet))**4
+        endif
+
+        if(soften) then
+           !print*, 'Softening', rz(i)/AU, lambdaII(iplanet,i)
+           lambdaII(iplanet,i)=lambdaII(iplanet,i)*abs(rz(i)-ap(iplanet))/deltamax
+           !print*, 'After', lambdaII(iplanet,i)
         endif
 
         !*************************************
@@ -130,11 +144,11 @@ subroutine compute_planet_torques
   do i=isr,ier
      aspectratio = H(i)/rz(i)
 
-!     if(abs(total_planet_torque(i)) > 0.1*aspectratio) then
-!        total_planet_torque(i) = 0.1*aspectratio*total_planet_torque(i)/abs(total_planet_torque(i))
+     if(abs(total_planet_torque(i)) > 0.1*aspectratio) then
+        total_planet_torque(i) = 0.1*aspectratio*total_planet_torque(i)/abs(total_planet_torque(i))
 
         !print*, rz(i)/AU, aspectratio, total_planet_torque(i)
-    ! endif
+     endif
   enddo
      
 

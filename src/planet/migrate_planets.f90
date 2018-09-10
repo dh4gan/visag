@@ -27,7 +27,8 @@ do iplanet=1,nplanet
    enddo
 
     ! Multiply by appropriate factors to get adot    
-   adot(iplanet) = -adot(iplanet)*4.0*pi*G/(omegaK(iplanetrad(iplanet))*ap(iplanet))
+   !adot(iplanet) = -adot(iplanet)*4.0*pi*G/(omegaK(iplanetrad(iplanet)))
+   adot(iplanet) = -adot(iplanet)*4.0*pi*ap(iplanet)/mp(iplanet)
     
     ! get numerically determined migration timescale
 
@@ -39,7 +40,7 @@ do iplanet=1,nplanet
            
     ! Move planets
     ap(iplanet) = ap(iplanet) + adot(iplanet)*dt
-
+    !print*, iplanet,ap(iplanet)/AU, tmig(iplanet)/yr
 enddo
 
 end subroutine migrate_planets

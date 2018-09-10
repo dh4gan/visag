@@ -71,14 +71,17 @@ do iplanet=1,nplanet
          ap(iplanet)/AU, tmig(iplanet)/yr
 enddo
 close(iprof)
-endif
+
 
 
 open(75,file=TRIM(prefix)//'_torque.'//fileno,status='unknown')
 do i=isr,ier
-   write(75,*) rz(i)/AU, H(i)/rz(i), lambdaI(1,i), lambdaII(1,i), total_planet_torque(i)
+   write(75,*) rz(i)/AU, 0.1*H(i)/rz(i), lambdaI(1,i), lambdaII(1,i), &
+        total_planet_torque(i), torque_term(i), total_planet_torque(i+1)-total_planet_torque(i)
 enddo
 close(75)
+
+endif
 
 ! Compute disk mass and maximum surface density
 ! Also compute radially averaged accretion rates

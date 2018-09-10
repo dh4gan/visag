@@ -71,17 +71,28 @@ use winddata, only: sigdot_wind, sigdot_accrete
         if(planetchoice=='y') then
            !dtorque = torque_term(i+1)- 2.0*torque_term(i) + torque_term(i)
            dtorque = torque_term(i+1)-torque_term(i)
+           !dtorque = torque_term(i) - torque_term(i-1)
+
+           !if(3.0*(term1-term2)-dtorque>0.0) then
+           !   dtorque = 3.0*(term1-term2)
+           !endif
         endif                
 
         vr = -3.0*(term2)/(rf(i)*sigma(i))
 
         dTcdr = (Tc(i+1) -Tc(i))*drzm1(i)   
 
-        if(t> 100.0*yr) then
-        write(75,'(7(1pe15.5,2X))') rz(i)/AU, dtorque, H(i)/AU, torque_term(i), &
-             3.0*(term1-term2), rzm1(i)*drzm1(i)*(3.0*(term1-term2) - dtorque)*dt
+        !if(t> 100.0*yr) then
+        !write(75,'(9(1pe15.5,2X))') rz(i)/AU, sigma(i),total_planet_torque(i), &
+        !     dtorque, 0.1*H(i)/rz(i), -dtorque+(3.0*(term1-term2)), &
+        !     torque_term(i), &
+        !     3.0*(term1-term2), &
+        !     rzm1(i)*drzm1(i)*(3.0*(term1-term2) - dtorque)*dt
 
-     endif
+        write(75,'(9(1pe15.5,2X))') rz(i)/AU, sigma(i), omegaK(i), rzm1(i)*drzm1(i)*(3.0*(term1-term2) - dtorque)*dt
+
+        
+     !endif
 
         snew(i) = sigma(i) + rzm1(i)*drzm1(i)*(3.0*(term1-term2) - dtorque)*dt -(sigdot_wind(i)-sigdot_accrete(i))*dt
         !write(*,'(3(1pe15.5,2X))') rz(i)/AU, 3.0*(term1-term2)/dtorque
@@ -135,7 +146,8 @@ use winddata, only: sigdot_wind, sigdot_accrete
     call migrate_planets
 endif
 
-
-if(t>100.0*yr) STOP
+!print*, t/yr,dt/yr
+!if(t>100.0*yr) STOP
+stop
   return
 end subroutine evolve

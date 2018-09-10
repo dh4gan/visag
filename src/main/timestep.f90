@@ -9,7 +9,7 @@ subroutine timestep
 
 use gravdata
 use unitdata, only: yr,tdump
-use planetdata, only: total_planet_torque
+use planetdata, only: total_planet_torque, planetchoice
 
 implicit none
 
@@ -27,7 +27,7 @@ Else
 EndIf
 C1 = 0.5d0
 
-!C0 = C0/1000.0
+!C0 = C0/10.0
 
 dttorq = 1.0e30
 
@@ -39,10 +39,11 @@ do i = isr, ier
    !dtmin = min(dtmin,0.001*tcool(i))
    dtmin = min(dtmin,maxstep*yr) ! timestep can not exceed maxstep
 
+   if(planetchoice=='y') then
    dttorq_try = C0*dr/(omegaK(i)*rf(i)*abs(total_planet_torque(i)))
 
    dttorq = min(dttorq, dttorq_try)
-
+endif
    
 
 enddo

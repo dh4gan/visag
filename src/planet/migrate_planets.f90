@@ -29,7 +29,7 @@ do iplanet=1,nplanet
 
     ! Multiply by appropriate factors to get adot    
    adot(iplanet) = -adot(iplanet)*4.0*pi* &
-        omegaK(iplanetrad(iplanet))*ap(iplanet)/mp(iplanet)
+        omegaK(iplanetrad(iplanet))*ap(iplanet)*ap(iplanet)/mp(iplanet)
    !adot(iplanet) = -adot(iplanet)*4.0*pi*ap(iplanet)/mp(iplanet)
     
     ! get numerically determined migration timescale

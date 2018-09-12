@@ -11,12 +11,13 @@ use winddata, only: sigdot_wind, sigdot_accrete
 
   implicit none
 
+  
   real(kind=8) :: dtmin,C0,C1,dr2,dr
   real(kind=8) :: tot_lumin,term1,term2
   real :: dtorque, dTcdr, vr, dt_torque
   logical :: timestepOK
 
-  integer :: i,j,k
+  integer :: i,j,k, iplanet
   integer :: Lcalc
 
   timestepOK = .false.
@@ -50,9 +51,8 @@ use winddata, only: sigdot_wind, sigdot_accrete
 
      heatfunc(:) = 9.0*nu_tc(:)*sigma(:)*omegaK(:)*omegaK(:)/8.0
 
-  
 
-
+     ! Calculate wind parameters
      call compute_wind
 
      ! Evolve the surface density with the diffusive term
@@ -75,6 +75,12 @@ use winddata, only: sigdot_wind, sigdot_accrete
            ! Symmetrised planet torque
            ! 1/2[ ((i+1) - (i)) + (i)-(i-1)) ]
            dtorque = 0.5*(torque_term(i+1) - torque_term(i-1))
+
+           do iplanet=1,nplanet
+              if(i==iplanetrad(iplanet) .or. i-1==iplanetrad(iplanet))then
+                 dtorque = 0.0
+              endif
+           enddo
 
            !if(3.0*(term1-term2)-dtorque>0.0) then
            !   dtorque = 3.0*(term1-term2)

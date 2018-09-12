@@ -57,7 +57,7 @@ dt = dtmin_visc
 dt = min(dtmin_visc, dtmin_torque) 
 dt = min(dt,maxstep*yr) ! timestep can not exceed maxstep
     
-print*, t/yr,dt/yr, dtmin_visc/dtmin_torque
+!print*, t/yr,dt/yr, dtmin_visc/dtmin_torque
 IF(dt>tdump) then
    print*, 'Reducing dt for rapid snapshotting'
    dt = tdump/10.0

@@ -24,11 +24,13 @@ do iplanet=1,nplanet
     
    do i=isr,ier       
       adot(iplanet) = adot(iplanet) + torquei(iplanet,i)*sigma(i)/drzm1(i)
+      !print*, adot(iplanet), lambdaII(iplanet,i),torquei(iplanet,i), sigma(i),drzm1(i)
    enddo
 
     ! Multiply by appropriate factors to get adot    
-   !adot(iplanet) = -adot(iplanet)*4.0*pi*G/(omegaK(iplanetrad(iplanet)))
-   adot(iplanet) = -adot(iplanet)*4.0*pi*ap(iplanet)/mp(iplanet)
+   adot(iplanet) = -adot(iplanet)*4.0*pi* &
+        omegaK(iplanetrad(iplanet))*ap(iplanet)/mp(iplanet)
+   !adot(iplanet) = -adot(iplanet)*4.0*pi*ap(iplanet)/mp(iplanet)
     
     ! get numerically determined migration timescale
 
@@ -40,7 +42,7 @@ do iplanet=1,nplanet
            
     ! Move planets
     ap(iplanet) = ap(iplanet) + adot(iplanet)*dt
-    !print*, iplanet,ap(iplanet)/AU, tmig(iplanet)/yr
+    !print*, iplanet,adot(iplanet)*yr/AU,ap(iplanet)/AU, tmig(iplanet)/yr
 enddo
 
 end subroutine migrate_planets

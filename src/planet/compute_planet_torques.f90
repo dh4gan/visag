@@ -13,7 +13,7 @@ subroutine compute_planet_torques
 
   integer :: iplanet,i
   real :: rhill,mratio,deltap, Pcrit, typeInorm
-  real :: tmig1, lambda_dash, deltamax,aspectratio
+  real :: tmig1, lambda_dash, deltamax,aspectratio, softenfactor
   logical :: soften
 
   call find_planets_in_disc
@@ -62,9 +62,10 @@ subroutine compute_planet_torques
         endif
 
         if(soften) then
-           !print*, 'Softening', rz(i)/AU, lambdaII(iplanet,i)
-           lambdaII(iplanet,i)=lambdaII(iplanet,i)*abs(rz(i)-ap(iplanet))/deltamax
-           !print*, 'After', lambdaII(iplanet,i)
+
+           softenfactor = abs(rz(i)-ap(iplanet))/deltamax
+           if(softenfactor < 0.0001) softenfactor = 0.0001           
+           lambdaII(iplanet,i)=lambdaII(iplanet,i)*softenfactor           
         endif
 
         !*************************************
@@ -150,8 +151,21 @@ subroutine compute_planet_torques
         !print*, rz(i)/AU, aspectratio, total_planet_torque(i)
      endif
   enddo
-     
+       
 
-   torque_term(:) = 2.0*omegaK(:)*rz(:)*rz(:)*sigma(:)*total_planet_torque(:)
+  ! Set brief time delay for planet torque activation
+
+  if(t < tdelay_planettorque*yr) then
+     total_planet_torque(:) = total_planet_torque(:)*1.0e-30
+  endif
+
+   torque_term(:) = 2.0*omegaK(:)*rf(:)*rf(:)*sigma(:)*total_planet_torque(:)
+
+   ! Zero torque_term at planet locations
+
+   do iplanet=1,nplanet
+      torque_term(iplanetrad(iplanet)) = 0
+      torque_term(iplanetrad(iplanet)+1) = 0
+   enddo
 
 end subroutine compute_planet_torques

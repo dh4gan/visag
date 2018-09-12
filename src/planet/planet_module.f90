@@ -1,6 +1,8 @@
 module planetdata
 ! Contains all data relating to planets inside the disc
 
+  real, parameter :: tdelay_planettorque = 1.0 ! Time delay for torques to activate in disc (years)
+
   ! Variables
   integer :: nplanet, nactive
   

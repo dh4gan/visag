@@ -6,7 +6,7 @@ program semi_analytic_disc
   use unitdata
   
 
-  real(kind=8) :: trem_dump
+  real(kind=8) :: tnext
 
   integer :: i, ifirst, ifirst2
 
@@ -21,7 +21,7 @@ program semi_analytic_disc
 
   print '(a)', 'Initial Conditions Written to File'
 
-  trem_dump = tdump
+  tnext = tdump
 
   ! Begin the simulation
   do while (t .lt. trun)
@@ -33,14 +33,12 @@ else
     call evolve
 endif
 
-     t = t + dt
-       
-     trem_dump = trem_dump - dt			
+     t = t + dt           
   
-     If (trem_dump .lt. 0.0d0) then
+     If (t .gt. tnext) then
         snapshotcounter = snapshotcounter +1
         call write_dump			
-        trem_dump = tdump			   	
+        tnext = tdump*snapshotcounter			   	
      endif
 
   enddo

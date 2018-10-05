@@ -1,6 +1,9 @@
 module magdata
-! This module retains parameters and arrays used by the MRI turbulent layer
-
+  !---------------------------------------------------------------------------
+  ! This module retains parameters and arrays used by the MRI turbulent layer
+  ! (Feature in development!)
+  !--------------------------------------------------------------------------
+  
 real, parameter :: tau_crit = 1.0
 real, parameter :: alpha_m = 0.01
 real, parameter :: Tcrit = 1000.0

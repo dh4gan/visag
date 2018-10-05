@@ -1,22 +1,24 @@
 module unitdata
+!-------------------------------------------------
 ! Module stores all physical constants, EOS table,
 ! and other parameters relating to file storage
-
+!--------------------------------------------------
+  
   integer,parameter :: itime = 80
   integer, parameter :: iprof = 83
   integer, parameter :: ispec = 78
   integer :: nrhopoints,nUpoints,snapshotcounter
   real :: tdump, trun, tslice,nfiles
 
-  real(kind=8), parameter :: G = 6.67d-8
-  real(kind=8), parameter :: AU = 1.496e13	 ! AU
-  real(kind=8), parameter :: yr = 3.15e7	 ! year
-  real(kind=8), parameter :: solarmass = 1.99e33 ! solar mass
-  real(kind=8), parameter :: mearth = 5.972e27
-  real(kind=8), parameter :: mjup = 1.898e30 ! Jupiter mass
+  real(kind=8), parameter :: G = 6.67d-8           ! cgs
+  real(kind=8), parameter :: AU = 1.496e13	   ! AU in cm
+  real(kind=8), parameter :: yr = 3.15e7	   ! year in s
+  real(kind=8), parameter :: solarmass = 1.99e33   ! solar mass
+  real(kind=8), parameter :: mearth = 5.972e27     ! Earth mass
+  real(kind=8), parameter :: mjup = 1.898e30       ! Jupiter mass
   real(kind=8), parameter :: msolyr = solarmass/yr
 
-  real(kind=8), parameter :: Qcrit = 1.5		 ! Critical Toomre Parameter
+  real(kind=8), parameter :: Qcrit = 1.5	! Critical Toomre Parameter
 
   real(kind=8), parameter :: pi =3.1415926535
   real(kind=8), parameter :: twopi = 2.0*pi

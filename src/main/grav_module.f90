@@ -1,7 +1,9 @@
 module gravdata
-! This module contains all the properties of the self-gravitating disc layer
+!---------------------------------------------------------
+! This module contains all the properties of the disc
 ! Also contains mstar, t and dt for expediency
-
+  !-------------------------------------------------------
+  
  integer :: nrgrid,nzgrid,isr,ier,isz,iez, nmax
  real :: rin,rout,zmax, p_T, T_1AU
  real :: t,dt, alpha_visc, T_background

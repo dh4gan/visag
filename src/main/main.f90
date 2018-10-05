@@ -1,6 +1,10 @@
 program semi_analytic_disc
-
-  ! Code to determine surface density of alpha disc.
+  !-----------------------------
+  ! Main program
+  !
+  ! Drives setup and evolution of viscous alpha disc
+  ! 
+  !----------------------------
 
   use gravdata
   use unitdata
@@ -17,6 +21,7 @@ program semi_analytic_disc
   !	Write first dump
   t = 0.0d0
   snapshotcounter = 1
+
   call write_dump
 
   print '(a)', 'Initial Conditions Written to File'
@@ -28,10 +33,10 @@ program semi_analytic_disc
 
     if(runmode=='l') then
 
-     call evolve_layers
-else
-    call evolve
-endif
+     call evolve_layers ! IN DEVELOPMENT
+  else
+     call evolve
+  endif
 
      t = t + dt           
   

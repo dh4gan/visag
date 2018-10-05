@@ -1,7 +1,7 @@
 # visag - VIscous Semi-Analytic self-Gravitating discs
 ======================================================
 
-This repository computes the viscous evolution of protostellar discs in 1D.
+This repository computes the viscous evolution of protostellar discs in 1D.  It either assumes a fixed Shakura-Sunyaev alpha parameter, or computes alpha as produced by self-gravitating disc turbulence in local thermodynamic equilibrium.
 
 Features
 ----------------
@@ -16,6 +16,7 @@ Future Features
 ---------------
 
 * Gravitational Interactions between embedded planets
+* Layered accretion (GI/MRI mixtures)
 * Accretion from external envelope/other sources
 * (integration into `dh4gan/grapus`)
 
@@ -39,8 +40,7 @@ The input parameters are specified in `visag.params` - an example file is given 
 Plotting
 --------
 
-The output files can be plotted using Python scripts found in the
-`plot/` directory
+The output files can be plotted using Python scripts found in the `plot/` directory
 
 The scripts were developed in Python 2.7, and depend on numpy and matplotlib
 

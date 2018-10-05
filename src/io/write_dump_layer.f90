@@ -1,6 +1,7 @@
-
 !-----------------------------------------------------------
-! Subroutine to write radial dumps 
+! Subroutine to write snapshots of the disc  
+! as a function of radius
+!
 !-----------------------------------------------------------
 
 subroutine write_dump

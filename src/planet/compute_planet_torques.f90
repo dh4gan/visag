@@ -47,7 +47,7 @@ subroutine compute_planet_torques
         deltamax = H(i)
 
         soften = .false.
-        if(rhill>deltamax) deltamax = rhill
+        if(1.44*rhill>deltamax) deltamax = 1.44*rhill
         
         if(deltap<deltamax) then
            deltap =deltamax

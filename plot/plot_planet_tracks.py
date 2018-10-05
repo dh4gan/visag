@@ -29,14 +29,15 @@ ax1.legend()
 fig2 = plt.figure()
 ax2 = fig2.add_subplot(111)
 
-ax2.set_ylim(amin(tmig[:,:])*0.9,amax(tmig[:,:])*1.1)
+ax2.set_ylim(amin(abs(tmig[:,:]))*0.9,amax(abs(tmig[:,:]))*1.1)
 #ax2.set_yscale('log')
 
 for i in range(nplanet):
-    ax2.plot(time,tmig[i,:], label='Planet '+str(i+1))
+    ax2.plot(time,abs(tmig[i,:]), label='Planet '+str(i+1))
 
 ax2.set_ylabel('Migration Timescale (yr)',fontsize=22)
 ax2.set_xlabel('Time (yr)',fontsize=22)
+ax2.set_yscale('log')
 ax2.legend()
 
 

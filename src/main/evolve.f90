@@ -76,15 +76,16 @@ use winddata, only: sigdot_wind, sigdot_accrete
            ! 1/2[ ((i+1) - (i)) + (i)-(i-1)) ]
            dtorque = 0.5*(torque_term(i+1) - torque_term(i-1))
 
+           if(3.0*(term1-term2)-dtorque>0.0) then
+              dtorque = 0.0
+          endif
+           
            do iplanet=1,nplanet
               if(i==iplanetrad(iplanet) .or. i-1==iplanetrad(iplanet))then
                  dtorque = 0.0
               endif
            enddo
 
-           !if(3.0*(term1-term2)-dtorque>0.0) then
-           !   dtorque = 3.0*(term1-term2)
-           !endif
         endif                
 
         vr = -3.0*(term2)/(rf(i)*sigma(i))

@@ -24,7 +24,6 @@ do iplanet=1,nplanet
     
    do i=isr,ier       
       adot(iplanet) = adot(iplanet) + torquei(iplanet,i)*sigma(i)/drzm1(i)
-      !print*, adot(iplanet), lambdaII(iplanet,i),torquei(iplanet,i), sigma(i),drzm1(i)
    enddo
 
     ! Multiply by appropriate factors to get adot    
@@ -42,7 +41,7 @@ do iplanet=1,nplanet
            
     ! Move planets
     ap(iplanet) = ap(iplanet) + adot(iplanet)*dt
-    !print*, iplanet,adot(iplanet)*yr/AU,ap(iplanet)/AU, tmig(iplanet)/yr
+  
 enddo
 
 end subroutine migrate_planets

@@ -91,7 +91,7 @@ subroutine compute_planet_torques
      ! Find normalisation constant to ensure correct Type I timescale
 
      if(tmig1 > 1.0e-30) then
-        lambda_dash = ap(iplanet)*ap(iplanet)*omegaK(iplanetrad(iplanet))/(4.0*pi*G*tmig1*typeInorm)
+        lambda_dash = mp(iplanet)/(omegaK(iplanetrad(iplanet))*ap(iplanet)*4.0*pi*tmig1*typeInorm)
       else
         lambda_dash = 0.0
       endif
@@ -123,10 +123,6 @@ subroutine compute_planet_torques
      fII(iplanet) = exp(-Pcrit+1.0)
      if(fII(iplanet) > 1.0) fII(iplanet)=1.0
 
-     fII(iplanet) = 1.0 ! DEBUG LINE - REMOVE!
-
-      !print*, 'Desired migration rate: ', t/yr, tmig1/yr, Pcrit, fII(iplanet)
- 
       !********************************************************
       ! Compute the total effective planet torque at this radius
       !*********************************************************

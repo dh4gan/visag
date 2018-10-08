@@ -11,8 +11,11 @@
 FC     = gfortran
 VPATH = src/main/ src/eos/ src/io/ src/layer/ src/planet/ src/setup/ src/wind/
 
+VERSION = \"$(shell git describe --tags --abbrev=0)\"
+GITHASH = \"$(shell git describe)\"
+
 # For real*8 files
-FFLAGS = -O3 -fdefault-real-8 -fbounds-check
+FFLAGS = -O3 -fdefault-real-8 -fbounds-check -DVERSION=${VERSION} -DGITHASH=${GITHASH} -cpp
 
 # Create object files:
 %.o: %.f

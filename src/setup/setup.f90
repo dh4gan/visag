@@ -16,7 +16,7 @@ subroutine setup
   real(kind=8) :: rmax,sig_r, gamma_init,mu_init
   real(kind=8) :: mdisk,mdisktry,dz
   real(kind=8) :: beta,rwindout,area, sig_0_try,tolerance
-
+    character :: version, githash
   integer :: i,ngrid, nzeros
 
   logical :: disk_exist
@@ -62,17 +62,20 @@ subroutine setup
   prefix = trim(prefix)
 
   write(*,*) " "
-  write(*,*) "-----------------------------------------------"
-if(runmode=='g') then
-  write(*,*) "           VISCOUS SELF-GRAVITATING DISC CODE"
-else if(runmode=='Q')then
-    write(*,*) "         FIXED-Q VISCOUS SELF-GRAVITATING DISC CODE"
-else
-    write(*,*) "         FIXED-ALPHA VISCOUS DISC CODE"
-endif
-  write(*,*) "     Modified by D.Forgan, 29th April 2010       "
-  write(*,*) "-----------------------------------------------"
-  write(*,*) " "
+  write(*,*) "--------------------------------------------------------"
+  write(*,*) " VISAG - VIscous Semi-Analytic self-Gravitating Discs"
+  write(*,*) "--------------------------------------------------------"
+
+#ifdef VERSION
+  write(*,*) "      Version  - ", VERSION
+#endif
+
+#ifdef GITHASH
+  write(*,*) "      Git Hash - ", GITHASH
+#endif
+
+  write(*,*) "      Compiled - ", __DATE__
+
   write(*,*) "-----------------------------------------------"
   write(*,*) " Input file: ./",trim(paramfile)
   write(*,*) "-----------------------------------------------"
@@ -80,6 +83,14 @@ endif
   write(*,*) " "			
   write(*,*) "-----------------------------------------------"
 
+if(runmode=='g') then
+  write(*,*) "  Viscous evolution calculated from gravitational instability (variable Toomre Q)"
+else if(runmode=='Q')then
+    write(*,*) " Viscous evolution calculated from gravitational instability (fixed Toomre Q)"
+else
+    write(*,*) " Viscous evolution calculated assuming a fixed alpha"
+endif
+  
   if(layerchoice=='y') then
     write(*,*) 'Disc will run with an MRI active upper layer'
 endif

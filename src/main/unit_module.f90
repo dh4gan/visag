@@ -37,4 +37,22 @@ character(len=6) :: snapshotformat
   character(len=100) :: fileno,prefix
   character(len=25), parameter :: paramfile = 'visag.params'
 
+
+CONTAINS
+
+  subroutine get_zero_padding_format(nfiles,zeroformat)
+    implicit none
+
+    integer,intent(in) :: nfiles
+    integer :: nzeros
+    character(1) :: zerostring
+    character(6),intent(inout) :: zeroformat
+    
+    nzeros = int(log10(real(nfiles+1)))+2
+    write(zerostring,'(I1)') nzeros
+    zeroformat = "(I"//TRIM(zerostring)//"."//TRIM(zerostring)//")"
+    
+    return 
+  end subroutine get_zero_padding_format
+  
 end module unitdata

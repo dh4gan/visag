@@ -12,7 +12,9 @@ use nbodydata
 
 implicit none
 
-integer :: iplanet
+integer :: iplanet, ibody
+character(6) :: filenumformat
+character(100) :: outputfile
 
 ! Open planet file
 
@@ -23,7 +25,6 @@ read(10,*) nplanet
 
 print*, 'There are ',nplanet, 'planets'
 nactive = nplanet
-nbodies = nplanet
 
 allocate(mp(nplanet),ap(nplanet), ecc(nplanet),inc(nplanet))
 allocate(longascend(nplanet), argper(nplanet), trueanom(nplanet))
@@ -65,7 +66,67 @@ enddo
 mp(:) = mp(:)*mjup
 ap(:) = ap(:)*AU
 
-! TODO - setup nbody arrays and calculate initial positions from orbits
+
+! If this is an N Body run, then create arrays for N body calculation
+! Easier to do the N body calculation in separate arrays (which include star)
+! N Body calculation units: (M=Msol, r=AU, t=1 yr/(2pi))
+
+! Remember iembryo and ibody exclude/include star respectively
+
+if(nbodychoice=='y') then
+    nbodies = nplanet+1 ! Must include the star
+
+    allocate(pos(3,nbodies),vel(3,nbodies),acc(3,nbodies), mass(nbodies))
+    allocate(angmom(3,nbodies),angmag(nbodies))
+    allocate(ekin(nbodies),epot(nbodies),etot(nbodies))
+    allocate(newpos(3,nbodies),newvel(3,nbodies))
+
+    pos(:,:) = 0.0
+    vel(:,:) = 0.0
+    acc(:,:) = 0.0
+
+    angmom(:,:) = 0.0
+    angmag(:) = 0.0
+    ekin(:) = 0.0
+    epot(:) = 0.0
+    etot(:) = 0.0
+
+    newpos(:,:) = 0.0
+    newvel(:,:) = 0.0
+
+    totalmass = totalmass/solarmass
+    dt_nbody = 1.0e-3 ! Set arbitrary small timestep initially
+    mass(1) = mstar/solarmass
+
+    do ibody=2,nbodies
+       iplanet = ibody-1
+       mass(ibody) = mp(iplanet)/solarmass 
+    enddo
+
+    ! Debug lines - open N Body files to check orbits
+
+    if(debug=='y') then
+       
+       ! Get character for body ID
+       call get_zero_padding_format(nbodies,filenumformat)
+       
+       ! Open output files
+       do ibody=2,nbodies          
+          write(fileno, filenumformat) ibody          
+          outputfile = TRIM(prefix)//".nbody."//TRIM(fileno)          
+          open(ibody+inbodylog,file=outputfile, form="formatted")
+       enddo
+       
+       ! Now set up log file
+       outputfile = TRIM(prefix)//".nbody.log"
+
+       open(inbodylog,file=outputfile,form="formatted")
+    endif
+
+    call calc_vector_from_orbit
+
+endif
+
 
 call find_planets_in_disc
 
@@ -73,8 +134,5 @@ do iplanet=1,nplanet
       print*, 'Planet ', iplanet, 'initially located at cell ', iplanetrad(iplanet)
       print*, 'Radius: ', rz(iplanetrad(iplanet))/AU
    enddo
-
-
-   ! TODO - set up log files for nbody elements if desired
 
 end subroutine setup_planets

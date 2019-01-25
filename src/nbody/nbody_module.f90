@@ -3,7 +3,7 @@ module nbodydata
   ! N Body variables
 
 
-  
+  integer, parameter :: inbodylog = 22
   real,parameter :: small = 1.0e-20
   real,parameter :: dampfac = 10.0
   real,parameter :: rsoft = 1.0e-5
@@ -14,7 +14,7 @@ module nbodydata
 
   ! Body data
 
-  integer :: nbodies, inbodylog !TODO define nbodies in the code!
+  integer :: nbodies
   real, allocatable, dimension(:,:) :: pos,vel,acc
   real, allocatable,dimension(:,:) :: newpos,newvel
   real,allocatable,dimension(:,:) :: angmom

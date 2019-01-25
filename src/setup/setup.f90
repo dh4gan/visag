@@ -119,10 +119,12 @@ endif
 
   ! Predicted number of files, and resulting format
 
-    nfiles = trun/tdump
-    nzeros = int(log10(nfiles)) +2
-    write(zerostring, '(I1)')nzeros
-    snapshotformat = "(I"//TRIM(zerostring)//"."//TRIM(zerostring)//")"
+  nfiles = trun/tdump
+
+  call get_zero_padding_format(int(nfiles),snapshotformat)
+    !nzeros = int(log10(nfiles)) +2
+    !write(zerostring, '(I1)')nzeros
+    !snapshotformat = "(I"//TRIM(zerostring)//"."//TRIM(zerostring)//")"
 
   ! Convert variables to cgs units
 

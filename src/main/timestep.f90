@@ -8,8 +8,9 @@ subroutine timestep
 !
 
 use gravdata
-use unitdata, only: yr,tdump
+use unitdata, only: yr,tdump, nbodychoice
 use planetdata, only: torque_term, planetchoice
+use nbodydata, only: dt_nbody
 
 implicit none
 
@@ -17,8 +18,6 @@ integer :: i
 real(kind=8) :: dtmin,C0,C1,dr2,dr
 real :: dtvisc, dtmin_visc, dttorq, dtmin_torque
 
-
-! TODO - also check against minimum N Body timestep
 
 dtmin_visc = 1.0e30
 dtmin_torque = dtmin_visc
@@ -57,7 +56,8 @@ do i = isr, ier
 enddo
 
 dt = dtmin_visc
-dt = min(dtmin_visc, dtmin_torque) 
+dt = min(dtmin_visc, dtmin_torque)
+if(nbodychoice=="y") dt = min(dt, dt_nbody) ! If doing an N-Body run, check against minimum N Body timestep
 dt = min(dt,maxstep*yr) ! timestep can not exceed maxstep
     
 !print*, t/yr,dt/yr, dtmin_visc/dtmin_torque

@@ -21,16 +21,18 @@ do iplanet=1,nplanet
 
    ! Integrate torque*sigma over the entire disc
    adot(iplanet) = 0.0
-    
-   do i=isr,ier       
-      adot(iplanet) = adot(iplanet) + torquei(iplanet,i)*sigma(i)/drzm1(i)
-   enddo
 
-    ! Multiply by appropriate factors to get adot    
-   adot(iplanet) = -adot(iplanet)*4.0*pi* &
-        omegaK(iplanetrad(iplanet))*ap(iplanet)*ap(iplanet)/mp(iplanet)
-   !adot(iplanet) = -adot(iplanet)*4.0*pi*ap(iplanet)/mp(iplanet)
-    
+   if(iplanetrad(iplanet)>0) then
+      do i=isr,ier       
+         adot(iplanet) = adot(iplanet) + torquei(iplanet,i)*sigma(i)/drzm1(i)
+      enddo
+
+      ! Multiply by appropriate factors to get adot    
+      adot(iplanet) = -adot(iplanet)*4.0*pi* &
+           omegaK(iplanetrad(iplanet))*ap(iplanet)*ap(iplanet)/mp(iplanet)
+      !adot(iplanet) = -adot(iplanet)*4.0*pi*ap(iplanet)/mp(iplanet)
+   endif
+   
     ! get numerically determined migration timescale
 
     if(abs(adot(iplanet))>1.0e-30) then

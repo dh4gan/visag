@@ -18,11 +18,18 @@ do iplanet=1,nplanet
       ! If at start or near inner boundary, use it as starting point
       if(iplanetrad(iplanet)<isr) iplanetrad(iplanet) = isr
 
-   do while(rz(iplanetrad(iplanet))<ap(iplanet))
-      iplanetrad(iplanet) = iplanetrad(iplanet)+1
-   enddo
-   !TODO - make sure that we don't exceed rz in finding planets
-   ! Also tag planets for removal here
+      do while(rz(iplanetrad(iplanet))<ap(iplanet) .and. iplanetrad(iplanet)<nrgrid)
+         iplanetrad(iplanet) = iplanetrad(iplanet)+1
+      enddo
+
+      ! If planet beyond outer disc radius, then set this to a negative value
+      ! Allows us to skip torque calculations later
+      
+      if(iplanetrad(iplanet)>nrgrid) iplanetrad(iplanet) = -10
+
+      ! Planets that move inside the minimum radius are removed here
+      if(rz(iplanetrad(iplanet)) < rremove) alive(iplanet)=0
+      
    
 enddo
 

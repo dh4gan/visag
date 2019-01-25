@@ -11,7 +11,7 @@ character(100) :: planetfile
 character(1) :: planetchoice
 
   ! Arrays
-  integer, allocatable,dimension(:)  :: alive, iplanetrad
+  integer, allocatable,dimension(:)  :: alive, iplanetrad, out_of_disc
   real, allocatable, dimension(:)  :: mp,ap, ecc, inc, longascend, argper, trueanom
   real, allocatable, dimension(:) :: total_planet_torque, torque_term
   real, allocatable, dimension(:) :: adot,tmig,tmigI, fII

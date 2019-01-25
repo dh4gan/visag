@@ -25,6 +25,10 @@ subroutine compute_planet_torques
   ! Loop over each planet
   do iplanet =1,nplanet
 
+
+     ! If planet not in disc, then skip it
+     if(iplanetrad(iplanet)<0) cycle
+     
      mratio = mp(iplanet)/Mstar
      rhill = ap(iplanet)*(mratio/3.0)**0.333
 
@@ -160,8 +164,10 @@ subroutine compute_planet_torques
    ! Zero torque_term at planet locations
 
    do iplanet=1,nplanet
-      torque_term(iplanetrad(iplanet)) = 0
-      torque_term(iplanetrad(iplanet)+1) = 0
+      if(iplanetrad(iplanet)>0) then
+         torque_term(iplanetrad(iplanet)) = 0
+         torque_term(iplanetrad(iplanet)+1) = 0
+      endif
    enddo
 
 end subroutine compute_planet_torques

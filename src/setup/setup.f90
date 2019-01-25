@@ -34,6 +34,7 @@ subroutine setup
 
   read(10,*) prefix  ! File output prefix
   read(10,'(a1)') runmode ! f = fixed alpha, g=self-gravitating, Q = self-gravitating, fixed Q
+  read(10,'(a1)') debug ! Run in debug mode? (y/n)
   read(10,'(a1)') layerchoice ! Run this with an MRI upper layer? (y/n)
   read(10,'(a1)') planetchoice ! Add planets? (y/n)
   read(10,'(a1)') nbodychoice ! Run with N-Body integration (y/n)

@@ -2,12 +2,13 @@ subroutine nbody_output(t)
 ! Outputs data to file
 ! Currently writes each particle to separate file
 
-use embryodata
-use eosdata,only: yr,twopi
+  use nbodydata
+  use planetdata
+use unitdata,only: yr,twopi
 
 implicit none
 real, intent(in) :: t
-integer :: ibody,iembryo
+integer :: ibody,iplanet
 
 102 format (1P,24E15.5)
 103 format (1P, 7E15.5)
@@ -18,16 +19,16 @@ call nbody_system_properties
 ! output individual bodies to separate files
 
    do ibody=2,nbodies
-     iembryo = ibody-1
+     iplanet = ibody-1
 
-     if(embryo(iembryo)%finished==1) cycle ! Skip finished particles
+     if(alive(iplanet)==0) cycle ! Skip finished particles
 
       write(ibody+inbodylog,102) t/yr, mass(ibody),pos(:,ibody), vel(:,ibody), &
-           acc(:,ibody),embryo(iembryo)%semimaj, embryo(iembryo)%ecc, &
-           embryo(iembryo)%inc, embryo(iembryo)%longascend, &
-           embryo(iembryo)%argper, embryo(iembryo)%trueanom, &
+           acc(:,ibody),ap(iplanet), ecc(iplanet), &
+           inc(iplanet), longascend(iplanet), &
+           argper(iplanet), trueanom(iplanet), &
            ekin(ibody),epot(ibody), etot(ibody),angmom(:,ibody), &
-           embryo(iembryo)%tmig
+           tmig(iplanet)
       call flush(ibody)
    enddo
 

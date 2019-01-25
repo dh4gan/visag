@@ -2,7 +2,7 @@ subroutine nbody_system_properties
 ! Calculates the various properties of the system
 ! Includes energy, angular momentum and orbits
 
-use embryodata
+use nbodydata
 
 implicit none
 
@@ -17,7 +17,7 @@ end subroutine nbody_system_properties
 subroutine angular_momentum
 ! Calculate the angular momentum of all the bodies
 
-use embryodata
+use nbodydata
 
 implicit none
 
@@ -49,7 +49,7 @@ subroutine energy
 ! Calculate the orbital parameters of all the bodies
 ! Also compute energy and angular momentum for error tracking
 
-use embryodata
+use nbodydata
 
 implicit none
 

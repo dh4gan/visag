@@ -5,8 +5,9 @@ subroutine nbody_rk4
 
 ! Do integration
 
-use stardata,only: debug
-use embryodata
+use unitdata,only: debug
+use nbodydata
+use planetdata, only: alive
 
 implicit none
 
@@ -23,7 +24,7 @@ newvel(:,:) = 0.0
 
 ! Switch off velocities of finished particles
 do ibody=2,nbodies
-   if(embryo(ibody-1)%finished==1) vel(:,ibody)=0.0
+   if(alive(ibody-1)==0) vel(:,ibody)=0.0
 enddo
 
 call nbody_integrate(dt_nbody,pos,vel,newpos,newvel)

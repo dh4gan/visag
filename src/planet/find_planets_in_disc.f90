@@ -21,7 +21,9 @@ do iplanet=1,nplanet
    do while(rz(iplanetrad(iplanet))<ap(iplanet))
       iplanetrad(iplanet) = iplanetrad(iplanet)+1
    enddo
-
+   !TODO - make sure that we don't exceed rz in finding planets
+   ! Also tag planets for removal here
+   
 enddo
 
 

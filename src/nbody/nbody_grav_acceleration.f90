@@ -5,7 +5,8 @@ subroutine nbody_grav_acceleration(position,acceleration)
 
 ! Calculated in units where G=1, M=msol, r=AU, t=2pi units/year
 
-use embryodata
+  use nbodydata
+  use planetdata, only: tmig,alive
 implicit none
 
 real, dimension(3,nbodies),intent(in) :: position
@@ -18,8 +19,8 @@ real, dimension(3) :: sep
 ! Skip body 1 as we fix the star at the origin
 do ibody=2,nbodies
 
-   ! Ignore particles that have finished
-   if(embryo(ibody-1)%finished==1) cycle
+   ! Ignore planets that are no longer active
+   if(alive(ibody-1)==0) cycle
 
     ! Start by computing the force from the star
     magipos = sqrt(position(1,ibody)*position(1,ibody) + &
@@ -35,7 +36,7 @@ do ibody=2,nbodies
        if(ibody==jbody) cycle ! Don't calculate force on itself
 
        ! Ignore particles that have finished
-       if(embryo(jbody-1)%finished==1) cycle
+       if(alive(jbody-1)==0) cycle
        
         do ix=1,3
             sep(ix) = position(ix,ibody) - position(ix,jbody)

@@ -1,7 +1,7 @@
 subroutine nbody_deallocate_arrays
 ! Code deallocates nbody arrays ready for the next disc model
 
-use embryodata
+use nbodydata
 implicit none
 
 deallocate(pos,vel,acc)

@@ -9,7 +9,7 @@
 
 # Compiler variables:
 FC     = gfortran
-VPATH = src/main/ src/eos/ src/io/ src/layer/ src/planet/ src/setup/ src/wind/
+VPATH = src/main/ src/eos/ src/io/ src/layer/ src/nbody src/planet/ src/setup/ src/wind/
 
 VERSION = \"$(shell git describe --tags --abbrev=0)\"
 GITHASH = \"$(shell git describe)\"
@@ -23,8 +23,8 @@ FFLAGS = -O3 -fdefault-real-8 -fbounds-check -DVERSION=${VERSION} -DGITHASH=${GI
 %.o: %.f90
 	$(FC) $(FFLAGS) -c $<
 
-SOURCESAF90 = grav_module.f90 mri_module.f90 planet_module.f90 \
-	      unit_module.f90 wind_module.f90 main.f90 \
+SOURCESAF90 = grav_module.f90 mri_module.f90 nbody_module.f90 \
+	      planet_module.f90 unit_module.f90 wind_module.f90 main.f90 \
 	      calc_typeI_migration.f90 compute_planet_torques.f90 \
 	      compute_wind.f90 disc_properties.f90 \
 	      eos.f90 eosread.f90 eos_T.f90 eos_cs.f90 \
@@ -32,6 +32,10 @@ SOURCESAF90 = grav_module.f90 mri_module.f90 planet_module.f90 \
 	      layer_properties.f90 midplane_properties.f90 \
 	      midplane_properties_grav.f90 midplane_properties_fixedalpha.f90 \
 	      midplane_properties_grav_fixedQ.f90  migrate_planets.f90 \
+	      nbody_acceleration.f90 nbody_deallocate_arrays.f90 \
+	      nbody_drag_terms.f90 nbody_grav_acceleration.f90 \
+	      nbody_integrate.f90 nbody_orbits.f90 nbody_output.f90 \
+	      nbody_rk4.f90 nbody_system_properties.f90 nbody_timestep.f90 \
               luminosity.f90 setup.f90 \
 	      setup_accrete.f90 setup_planets.f90 setup_wind.f90 timestep.f90 \
 	      wind_profiles.f90 xraywind.f90 write_dump.f90 	      

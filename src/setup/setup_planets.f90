@@ -8,6 +8,7 @@ subroutine setup_planets
 use gravdata
 use planetdata
 use unitdata
+use nbodydata
 
 implicit none
 
@@ -22,8 +23,11 @@ read(10,*) nplanet
 
 print*, 'There are ',nplanet, 'planets'
 nactive = nplanet
+nbodies = nplanet
 
-allocate(mp(nplanet),ap(nplanet),alive(nplanet), iplanetrad(nplanet))
+allocate(mp(nplanet),ap(nplanet), ecc(nplanet),inc(nplanet))
+allocate(longascend(nplanet), argper(nplanet), trueanom(nplanet))
+allocate(alive(nplanet), iplanetrad(nplanet))
 allocate(lambdaI(nplanet,nmax), lambdaII(nplanet,nmax))
 allocate(fII(nplanet))
 allocate(adot(nplanet),tmig(nplanet),tmigI(nplanet))
@@ -33,6 +37,12 @@ allocate(torquei(nplanet,nmax), torque_term(nmax), total_planet_torque(nmax))
 alive(:) = 1
 mp(:) = 0.0
 ap(:) = 0.0
+ecc(:) = 0.0
+inc(:) = 0.0
+longascend(:) = 0.0
+argper(:) = 0.0
+trueanom(:) = 0.0
+
 iplanetrad(:) = 0
 
 lambdaII(:,:) = 0.0
@@ -45,10 +55,9 @@ torquei(:,:) = 0.0
 total_planet_torque(:) = 0.0
 
 
-! TODO - redo planets file read to allow full orbit determination 
 
 do iplanet=1,nplanet
-   read(10,*) mp(iplanet), ap(iplanet)
+   read(10,*) mp(iplanet), ap(iplanet), ecc(iplanet), inc(iplanet), longascend(iplanet), argper(iplanet), trueanom(iplanet)
 enddo
  
 

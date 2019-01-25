@@ -1,7 +1,7 @@
 subroutine nbody_integrate(deltat, position,velocity,newposition,newvelocity)
 ! This subroutine drives the RK4 integration
 
-use embryodata
+use nbodydata
 implicit none
 
 real, intent(in) :: deltat

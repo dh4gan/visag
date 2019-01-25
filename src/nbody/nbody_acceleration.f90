@@ -1,7 +1,7 @@
 subroutine nbody_acceleration(position,velocity,acceleration)
 ! Routine drives calculation of all different acceleration terms
 
-use embryodata,only: nbodies
+use nbodydata,only: nbodies
 implicit none
 
 

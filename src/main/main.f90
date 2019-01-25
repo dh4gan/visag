@@ -48,6 +48,8 @@ program semi_analytic_disc
 
   enddo
 
+  call nbody_deallocate_arrays
+
   close(itime)
 
 end program semi_analytic_disc

@@ -31,7 +31,8 @@ module unitdata
 
   real(kind=8), allocatable, dimension(:,:,:) :: eostable
 
-character(len=1) :: runmode, layerchoice, tempchoice, zerostring
+  character(len=1) :: runmode, layerchoice, tempchoice,nbodychoice,debug
+  character(len=1) :: zerostring
 character(len=6) :: snapshotformat
   character(len=100) :: fileno,prefix
   character(len=25), parameter :: paramfile = 'visag.params'

@@ -8,7 +8,8 @@ subroutine nbody_drag_terms(position,velocity,acceleration)
 ! Forces not calculated on body 1 (the star)
 ! Forces not calculated if embryo is finished
 
-use embryodata
+  use nbodydata
+  use planetdata, only: tmig, alive
 implicit none
 
 integer :: ibody,ix
@@ -20,9 +21,9 @@ real,dimension(nbodies) :: vdotr,rmag
 
 do ix=1,3
     do ibody=2,nbodies
-    if(embryo(ibody-1)%tmig>small .and. embryo(ibody-1)%finished==0) then
+    if(tmig(ibody-1)>small .and. alive(ibody-1)==1) then
        acceleration(ix,ibody) = acceleration(ix,ibody)- &
-            velocity(ix,ibody)/(2.0*embryo(ibody-1)%tmig)
+            velocity(ix,ibody)/(2.0*tmig(ibody-1))
     endif
     enddo
 enddo
@@ -43,9 +44,9 @@ do ix=1,3
 
 do ibody=2,nbodies
 
- if (embryo(ibody-1)%tmig*rmag(ibody)>small .and.  embryo(ibody-1)%finished==0) then
+ if (tmig(ibody-1)*rmag(ibody)>small .and.  alive(ibody-1)==1) then
 acceleration(ix,ibody) = acceleration(ix,ibody) - &
-     2.0*vdotr(ibody)*position(ix,ibody)/(rmag(ibody)*rmag(ibody)*dampfac*embryo(ibody-1)%tmig)
+     2.0*vdotr(ibody)*position(ix,ibody)/(rmag(ibody)*rmag(ibody)*dampfac*tmig(ibody-1))
 endif
 enddo
 enddo
@@ -54,9 +55,9 @@ enddo
 
 do ibody=2,nbodies
 !if(embryo(ibody-1)%finished==1) cycle
-if(embryo(ibody-1)%tmig>small .and. embryo(ibody-1)%finished==0) then
+if(tmig(ibody-1)>small .and. alive(ibody-1)==1) then
     acceleration(3,ibody) = acceleration(3,ibody) - &
-         2.0*vel(3,ibody)/(dampfac*embryo(ibody-1)%tmig)
+         2.0*vel(3,ibody)/(dampfac*tmig(ibody-1))
 endif
 end do
 

@@ -2,8 +2,8 @@ subroutine nbody_timestep(position,velocity)
 ! Adjusts the timestep based on a standard step doubling algorithm
 ! Takes two half timesteps and compares to the current result
 
-use stardata,only: debug
-use embryodata
+use unitdata,only: debug
+use nbodydata
 
 implicit none
 

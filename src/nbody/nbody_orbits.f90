@@ -2,12 +2,13 @@ subroutine calc_orbit_from_vector
 ! Calculate the orbital parameters of all the bodies
 ! Also compute energy and angular momentum for error tracking
 
-use embryodata
-use eosdata, only: twopi,udist
+  use nbodydata
+  use planetdata
+use unitdata, only: twopi
 
 implicit none
 
-integer :: ibody,iembryo,ix
+integer :: ibody,iembryo,ix, iplanet
 real :: gravparam
 real :: rdotV, ndotR,ndotV,edotn,edotR, nmag
 real,dimension(3) :: nplane
@@ -23,11 +24,9 @@ vmag(:) = sqrt(vel(1,:)*vel(1,:) + vel(2,:)*vel(2,:) + vel(3,:)*vel(3,:))
 
 do ibody=2,nbodies
 
-iembryo = ibody-1
-
-if(embryo(iembryo)%finished==1) cycle
-
-embryo(iembryo)%rmag = rmag(ibody)*udist
+iplanet = ibody-1
+  
+if(alive(iplanet)==0) cycle
 
 ! Eccentricity first - calculate eccentricity (Laplace-Runge-Lenz) Vector
 vdotr(:) = 0.0
@@ -39,32 +38,28 @@ do ix=1,3
    eccvector(ix,:) = (vmag(:)*vmag(:)*pos(ix,:) -vdotr(:)*vel(ix,:))/gravparam - pos(ix,:)/rmag(:)
 enddo
 
-embryo(iembryo)%ecc = sqrt(eccvector(1,ibody)*eccvector(1,ibody) + &
+ecc(iplanet) = sqrt(eccvector(1,ibody)*eccvector(1,ibody) + &
     eccvector(2,ibody)*eccvector(2,ibody) + &
     eccvector(3,ibody)*eccvector(3,ibody))
 
 
 ! Semimajor axis
-embryo(iembryo)%semimaj = angmag(ibody)*angmag(ibody)/&
-    (gravparam*(1.0- embryo(iembryo)%ecc*embryo(iembryo)%ecc))
+ap(iplanet) = angmag(ibody)*angmag(ibody)/&
+    (gravparam*(1.0- ecc(iplanet)*ecc(iplanet)))
 
-if(embryo(iembryo)%semimaj < 0.0) embryo(iembryo)%semimaj = abs(embryo(iembryo)%semimaj)
-
-embryo(iembryo)%a = embryo(iembryo)%semimaj*udist
-
-embryo(iembryo)%inc = 0.0
+if(ap(iplanet) < 0.0) ap(iplanet) = abs(ap(iplanet))
 
 ! Calculate the orbit's angles
 
    ! Inclination
 
    if(angmag(ibody)<small) cycle
-   embryo(iembryo)%inc = acos(angmom(3,ibody)/ angmag(ibody))
+   inc(iplanet) = acos(angmom(3,ibody)/ angmag(ibody))
 
    ! Longitude of the Ascending Node
 
-   if (embryo(iembryo)%inc <small) then
-      embryo(iembryo)%longascend = 0.0
+   if (inc(iplanet) <small) then
+      longascend(iplanet) = 0.0
 
       nplane(1) = angmag(ibody)
       nplane(2) = 0.0
@@ -80,12 +75,12 @@ embryo(iembryo)%inc = 0.0
       nmag = sqrt(nplane(1)*nplane(1) + nplane(2)*nplane(2) + nplane(3)*nplane(3));
 
       if(nmag>small) then
-         embryo(iembryo)%longascend = acos(nplane(1) / nmag);
+         longascend(iplanet) = acos(nplane(1) / nmag);
       else
-         embryo(iembryo)%longascend = 0.0
+         longascend(iplanet) = 0.0
       endif
 
-      if (nplane(2) < 0.0) embryo(iembryo)%longascend = twopi - embryo(iembryo)%longascend
+      if (nplane(2) < 0.0) longascend(iplanet) = twopi - longascend(iplanet)
 
    endif
 
@@ -94,52 +89,52 @@ embryo(iembryo)%inc = 0.0
 
    !If orbit circular, no inclination, then use the position vector itself
 
-   if (embryo(iembryo)%ecc < small .and. abs(embryo(iembryo)%inc) < small) then
+   if (ecc(iplanet) < small .and. abs(inc(iplanet)) < small) then
 
-      embryo(iembryo)%trueanom = acos(pos(1,ibody) / rmag(ibody));
-      if (vel(1,ibody) < 0.0) embryo(iembryo)%trueanom = twopi - embryo(iembryo)%trueanom
+      trueanom(iplanet) = acos(pos(1,ibody) / rmag(ibody));
+      if (vel(1,ibody) < 0.0) trueanom(iplanet) = twopi - trueanom(iplanet)
 
       ! If orbit circular and inclination non-zero, then use the orbital plane vector
-   else if (embryo(iembryo)%ecc < small) then
+   else if (ecc(iplanet) < small) then
 
       ndotR = nplane(1)*pos(1,ibody) + nplane(2)*pos(2,ibody) + nplane(3)*pos(3,ibody)
       ndotR = ndotR / (rmag(ibody) * nmag);
 
       ndotV = nplane(1)*vel(1,ibody) + nplane(2)*vel(2,ibody) + nplane(3)*vel(3,ibody)
 
-      embryo(iembryo)%trueanom = acos(ndotR);
+      trueanom(iplanet) = acos(ndotR);
 
-      if (ndotV > 0.0) embryo(iembryo)%trueanom = twopi - embryo(iembryo)%trueanom
+      if (ndotV > 0.0) trueanom(iplanet) = twopi - trueanom(iplanet)
 
       ! For non-circular orbits use the eccentricity vector
    else
 
       edotR = eccvector(1,ibody)*pos(1,ibody) + eccvector(2,ibody)*pos(2,ibody) + eccvector(3,ibody)*pos(3,ibody)
-      edotR = edotR / (rmag(ibody) * embryo(iembryo)%ecc);
+      edotR = edotR / (rmag(ibody) * ecc(iplanet));
 
       rdotV = vel(1,ibody)*pos(1,ibody) + vel(2,ibody)*pos(2,ibody) + vel(3,ibody)*pos(3,ibody)
 
-     embryo(iembryo)%trueanom = acos(edotR);
+     trueanom(iplanet) = acos(edotR);
 
-      if (rdotV < 0.0)embryo(iembryo)%trueanom = twopi - embryo(iembryo)%trueanom
+      if (rdotV < 0.0)trueanom(iplanet) = twopi - trueanom(iplanet)
    endif
 
    ! Finally, calculate the longitude of periapsis - first calculate the argument of periapsis
 
-   if (embryo(iembryo)%ecc > small) then
+   if (ecc(iplanet) > small) then
 
       edotn = eccvector(1,ibody)*nplane(1) + &
               eccvector(2,ibody)*nplane(2) + &
               eccvector(3,ibody)*nplane(3);
 
-      edotn = edotn / (nmag * embryo(iembryo)%ecc);
+      edotn = edotn / (nmag * ecc(iplanet));
 
-      embryo(iembryo)%argper = acos(edotn);
-      if (eccvector(3,ibody) < 0.0) embryo(iembryo)%argper = twopi - embryo(iembryo)%argper
+      argper(iplanet) = acos(edotn);
+      if (eccvector(3,ibody) < 0.0) argper(iplanet) = twopi - argper(iplanet)
 
    else
 
-      embryo(iembryo)%argper = 0.0
+      argper(iplanet) = 0.0
 
    endif
 
@@ -150,12 +145,13 @@ end subroutine calc_orbit_from_vector
 subroutine calc_vector_from_orbit
 ! Calculates body's position and velocity from orbital data
 
-use embryodata
-use eosdata, only: twopi, udist
+use nbodydata
+use planetdata
+use unitdata, only: twopi
 
 implicit none
 
-integer :: ibody,iembryo
+integer :: ibody,iplanet
 real :: gravparam, semilatusrectum
 !real :: a,e,i,long,om,nu
 real,dimension(nbodies) :: rmag,vmag
@@ -170,16 +166,16 @@ om(:) = 0.0
 nu(:) = 0.0
 
 do ibody=2,nbodies
-    iembryo=ibody-1
+    iplanet =ibody-1
 
-    a(ibody) = embryo(iembryo)%semimaj ! semimaj is in AU
-    e(ibody) = embryo(iembryo)%ecc
-    i(ibody) = embryo(iembryo)%inc
-    long(ibody) = embryo(iembryo)%longascend
-    om(ibody) = embryo(iembryo)%argper
-    nu(ibody) = embryo(iembryo)%trueanom
+    a(ibody) = ap(iplanet) ! semimaj is in AU
+    e(ibody) = ecc(iplanet)
+    i(ibody) = inc(iplanet)
+    long(ibody) = longascend(iplanet)
+    om(ibody) = argper(iplanet)
+    nu(ibody) = trueanom(iplanet)
     
-    rmag(ibody) = embryo(iembryo)%semimaj * (1.0 - e(ibody) * e(ibody)) / (1.0 &
+    rmag(ibody) = a(ibody) * (1.0 - e(ibody) * e(ibody)) / (1.0 &
 + e(ibody) * cos(nu(ibody)))
 
 

@@ -44,6 +44,9 @@ tmigI(:) = 0.0
 torquei(:,:) = 0.0
 total_planet_torque(:) = 0.0
 
+
+! TODO - redo planets file read to allow full orbit determination 
+
 do iplanet=1,nplanet
    read(10,*) mp(iplanet), ap(iplanet)
 enddo
@@ -53,11 +56,16 @@ enddo
 mp(:) = mp(:)*mjup
 ap(:) = ap(:)*AU
 
+! TODO - setup nbody arrays and calculate initial positions from orbits
+
 call find_planets_in_disc
 
 do iplanet=1,nplanet
       print*, 'Planet ', iplanet, 'initially located at cell ', iplanetrad(iplanet)
       print*, 'Radius: ', rz(iplanetrad(iplanet))/AU
-enddo
+   enddo
+
+
+   ! TODO - set up log files for nbody elements if desired
 
 end subroutine setup_planets

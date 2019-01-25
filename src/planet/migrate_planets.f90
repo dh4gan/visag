@@ -38,7 +38,10 @@ do iplanet=1,nplanet
     else
        tmig(iplanet) = 0.0
     endif
-           
+
+
+    ! TODO - write new routine to choose between basic and N-Body motion
+    
     ! Move planets
     ap(iplanet) = ap(iplanet) + adot(iplanet)*dt
   

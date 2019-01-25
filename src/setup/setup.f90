@@ -36,6 +36,7 @@ subroutine setup
   read(10,'(a1)') runmode ! f = fixed alpha, g=self-gravitating, Q = self-gravitating, fixed Q
   read(10,'(a1)') layerchoice ! Run this with an MRI upper layer? (y/n)
   read(10,'(a1)') planetchoice ! Add planets? (y/n)
+  read(10,'(a1)') nbodychoice ! Run with N-Body integration (y/n)
   read(10,*) planetfile ! File containing planet data
   read(10,*) alpha_visc ! If fixed alpha viscosity, define it here
   read(10,'(a)') tempchoice ! Background Temperature: f=fixed, s=stellar
@@ -61,6 +62,8 @@ subroutine setup
 
   prefix = trim(prefix)
 
+  if(planetchoice=='n') nbodychoice='n'
+  
   write(*,*) " "
   write(*,*) "--------------------------------------------------------"
   write(*,*) " VISAG - VIscous Semi-Analytic self-Gravitating Discs"

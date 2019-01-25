@@ -17,6 +17,9 @@ integer :: i
 real(kind=8) :: dtmin,C0,C1,dr2,dr
 real :: dtvisc, dtmin_visc, dttorq, dtmin_torque
 
+
+! TODO - also check against minimum N Body timestep
+
 dtmin_visc = 1.0e30
 dtmin_torque = dtmin_visc
 

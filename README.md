@@ -1,4 +1,4 @@
-# visag - VIscous Semi-Analytic self-Gravitating discs
+visag - VIscous Semi-Analytic self-Gravitating discs
 ======================================================
 
 This repository computes the viscous evolution of protostellar discs in 1D.  It either assumes a fixed Shakura-Sunyaev alpha parameter, or computes alpha as produced by self-gravitating disc turbulence in local thermodynamic equilibrium.

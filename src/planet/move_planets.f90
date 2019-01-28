@@ -1,4 +1,4 @@
-subroutine migrate_planets
+subroutine move_planets
 !
 ! Subroutine uses the torque exerted by each planet to find the
 ! migration timescale for each planet
@@ -49,4 +49,4 @@ do iplanet=1,nplanet
   
 enddo
 
-end subroutine migrate_planets
+end subroutine move_planets

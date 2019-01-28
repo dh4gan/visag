@@ -31,7 +31,7 @@ SOURCESAF90 = grav_module.f90 mri_module.f90 nbody_module.f90 \
               evolve.f90 evolve_layer.f90 find_planets_in_disc.f90 \
 	      layer_properties.f90 midplane_properties.f90 \
 	      midplane_properties_grav.f90 midplane_properties_fixedalpha.f90 \
-	      midplane_properties_grav_fixedQ.f90  migrate_planets.f90 \
+	      midplane_properties_grav_fixedQ.f90  move_planets.f90 \
 	      nbody_acceleration.f90 nbody_deallocate_arrays.f90 \
 	      nbody_drag_terms.f90 nbody_grav_acceleration.f90 \
 	      nbody_integrate.f90 nbody_orbits.f90 nbody_output.f90 \

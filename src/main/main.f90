@@ -42,8 +42,15 @@ program semi_analytic_disc
   
      If (t .gt. tnext) then
         snapshotcounter = snapshotcounter +1
-        call write_dump			
-        tnext = tdump*snapshotcounter			   	
+        call write_dump
+
+        if(debug=="y" .and. nbodychoice=="y") call nbody_output(t)
+
+        
+        tnext = tdump*snapshotcounter
+
+
+        
      endif
 
   enddo

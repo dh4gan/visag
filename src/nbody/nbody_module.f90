@@ -21,7 +21,7 @@ module nbodydata
   
   real,dimension(3) :: system_angmom,rcom,vcom,acom
   real,allocatable,dimension(:) :: mass, ekin,epot,etot,angmag
-  real,allocatable,dimension(:) :: r
+  real,allocatable,dimension(:) :: r, a, ecc, inc, longascend, argper, trueanom
 
 
 contains

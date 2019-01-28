@@ -151,8 +151,9 @@ use winddata, only: sigdot_wind, sigdot_accrete
    if(planetchoice=='y') then
     ! Move planets
     call move_planets
-endif
+ endif
 
+ 
 !print*, t/yr,dt/yr
 !if(t>2.0*yr) STOP
 !stop

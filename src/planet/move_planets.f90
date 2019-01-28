@@ -1,12 +1,15 @@
 subroutine move_planets
-!
-! Subroutine uses the torque exerted by each planet to find the
-! migration timescale for each planet
-!
+  !
+  ! Subroutine uses the torque exerted by each planet to find the
+  ! migration timescale for each planet
+  !
+  ! If N Body integration is requested, N body integrator called here
+  !
 
 use planetdata
 use gravdata
 use unitdata
+use nbodydata, only: a
 
 implicit none
 
@@ -41,12 +44,30 @@ do iplanet=1,nplanet
        tmig(iplanet) = 0.0
     endif
 
+ enddo
 
-    ! TODO - write new routine to choose between basic and N-Body motion
+ ! Migration timescales calculated - now must move bodies
+
+ ! If using N Body integrator, call it here
+ 
+ if(nbodychoice=="y") then
+
+    call nbody_rk4
+
+    ! Update planet data after integration step
+    do iplanet=1,nplanet
+       ap(iplanet) = a(iplanet+1)/AU
+    enddo
     
-    ! Move planets
-    ap(iplanet) = ap(iplanet) + adot(iplanet)*dt
-  
-enddo
+ else
+
+    ! If not using an integrator, simply move planets radially
+    
+    do iplanet=1,nplanet   
+       ap(iplanet) = ap(iplanet) + adot(iplanet)*dt
+    enddo
+       
+ endif
+    
 
 end subroutine move_planets

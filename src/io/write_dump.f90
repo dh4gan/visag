@@ -10,6 +10,7 @@ subroutine write_dump
   use planetdata
   use unitdata
   use winddata
+  use nbodydata
 
   implicit none
 
@@ -63,12 +64,19 @@ endif
 
 
 if(planetchoice=='y') then
+
+   if(nbodychoice=='y') then
+      call calc_orbit_from_vector
+   endif
+   
 open(iprof, file=TRIM(prefix)//'_planets.'//fileno,status='unknown')
 write(iprof,*)t/yr,nplanet,nactive
 do iplanet=1,nplanet
 
     write(iprof,*) alive(iplanet),mp(iplanet)/mjup, &
-         ap(iplanet)/AU, tmig(iplanet)/yr
+         a(iplanet+1), ecc(iplanet+1), inc(iplanet+1), &
+         longascend(iplanet+1), argper(iplanet+1), &
+         trueanom(iplanet+1), tmig(iplanet)/yr
 enddo
 close(iprof)
 

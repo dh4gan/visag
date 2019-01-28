@@ -1,7 +1,6 @@
 subroutine nbody_rk4
 ! This subroutine drives the N-Body integration over a single timestep
 ! Integration is done in a separate set of arrays for speed
-! Orbital elements are stored in GE_embryo type
 
 ! Do integration
 
@@ -15,7 +14,7 @@ integer :: ibody
 logical :: withintolerance
 
 withintolerance = .false.
-if(debug=='y') print*, 'Attempting integration RK4'
+if(debug=='y') print*, 'Attempting integration RK4 ',dt_nbody, alive(:)
 
 do while(withintolerance .eqv. .false.)
 

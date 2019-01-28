@@ -26,14 +26,17 @@ read(10,*) nplanet
 print*, 'There are ',nplanet, 'planets'
 nactive = nplanet
 
-allocate(mp(nplanet),ap(nplanet), ecc(nplanet),inc(nplanet))
-allocate(longascend(nplanet), argper(nplanet), trueanom(nplanet))
+allocate(mp(nplanet),ap(nplanet))
 allocate(alive(nplanet), iplanetrad(nplanet))
 allocate(lambdaI(nplanet,nmax), lambdaII(nplanet,nmax))
 allocate(fII(nplanet))
 allocate(adot(nplanet),tmig(nplanet),tmigI(nplanet))
 allocate(torquei(nplanet,nmax), torque_term(nmax), total_planet_torque(nmax))
 
+! Some arrays will include the star
+nbodies = nplanet+1 
+
+allocate(a(nbodies), ecc(nbodies), inc(nbodies), longascend(nbodies), argper(nbodies), trueanom(nbodies))
 
 alive(:) = 1
 mp(:) = 0.0
@@ -55,17 +58,16 @@ tmigI(:) = 0.0
 torquei(:,:) = 0.0
 total_planet_torque(:) = 0.0
 
-
-
 do iplanet=1,nplanet
-   read(10,*) mp(iplanet), ap(iplanet), ecc(iplanet), inc(iplanet), longascend(iplanet), argper(iplanet), trueanom(iplanet)
+   read(10,*) mp(iplanet), ap(iplanet), &
+        ecc(iplanet+1), inc(iplanet+1), longascend(iplanet+1), &
+        argper(iplanet+1), trueanom(iplanet+1)
 enddo
  
-
 ! Convert to correct units
 mp(:) = mp(:)*mjup
-ap(:) = ap(:)*AU
-
+a(2:nbodies) = ap(:) ! This semimajor axis operates in AU
+ap(:) = ap(:)*AU ! This operates in cm
 
 ! If this is an N Body run, then create arrays for N body calculation
 ! Easier to do the N body calculation in separate arrays (which include star)
@@ -74,8 +76,7 @@ ap(:) = ap(:)*AU
 ! Remember iembryo and ibody exclude/include star respectively
 
 if(nbodychoice=='y') then
-    nbodies = nplanet+1 ! Must include the star
-
+    
     allocate(pos(3,nbodies),vel(3,nbodies),acc(3,nbodies), mass(nbodies))
     allocate(angmom(3,nbodies),angmag(nbodies))
     allocate(ekin(nbodies),epot(nbodies),etot(nbodies))
@@ -126,7 +127,6 @@ if(nbodychoice=='y') then
     call calc_vector_from_orbit
 
 endif
-
 
 call find_planets_in_disc
 

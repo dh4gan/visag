@@ -44,10 +44,10 @@ ecc(iplanet) = sqrt(eccvector(1,ibody)*eccvector(1,ibody) + &
 
 
 ! Semimajor axis
-ap(iplanet) = angmag(ibody)*angmag(ibody)/&
+a(ibody) = angmag(ibody)*angmag(ibody)/&
     (gravparam*(1.0- ecc(iplanet)*ecc(iplanet)))
 
-if(ap(iplanet) < 0.0) ap(iplanet) = abs(ap(iplanet))
+if(a(ibody) < 0.0) a(ibody) = abs(a(ibody))
 
 ! Calculate the orbit's angles
 
@@ -147,79 +147,63 @@ subroutine calc_vector_from_orbit
 
 use nbodydata
 use planetdata
-use unitdata, only: twopi
+use unitdata, only: twopi, AU
 
 implicit none
 
 integer :: ibody,iplanet
 real :: gravparam, semilatusrectum
-!real :: a,e,i,long,om,nu
 real,dimension(nbodies) :: rmag,vmag
 
-real,dimension(nbodies) :: a,e,i,long,om,nu
-
-a(:) = 0.0
-e(:) = 0.0
-i(:) = 0.0
-long(:) = 0.0
-om(:) = 0.0
-nu(:) = 0.0
+totalmass = sum(mass)
 
 do ibody=2,nbodies
     iplanet =ibody-1
-
-    a(ibody) = ap(iplanet) ! semimaj is in AU
-    e(ibody) = ecc(iplanet)
-    i(ibody) = inc(iplanet)
-    long(ibody) = longascend(iplanet)
-    om(ibody) = argper(iplanet)
-    nu(ibody) = trueanom(iplanet)
     
-    rmag(ibody) = a(ibody) * (1.0 - e(ibody) * e(ibody)) / (1.0 &
-+ e(ibody) * cos(nu(ibody)))
-
+    rmag(ibody) = a(ibody) * (1.0 - ecc(ibody) * ecc(ibody)) / (1.0 &
++ ecc(ibody) * cos(trueanom(ibody)))
 
 
 ! 2. Calculate position vector in orbital plane */
 
-pos(1,ibody) = rmag(ibody)*cos(nu(ibody));
-pos(2,ibody) = rmag(ibody) * sin(nu(ibody));
+pos(1,ibody) = rmag(ibody)*cos(trueanom(ibody));
+pos(2,ibody) = rmag(ibody) * sin(trueanom(ibody));
 pos(3,ibody) = 0.0;
 
+print*, trueanom(ibody), rmag(ibody)
 ! 3. Calculate velocity vector in orbital plane */
-semilatusrectum = abs(a(ibody) * (1.0 - e(ibody) * e(ibody)))
+semilatusrectum = abs(a(ibody) * (1.0 - ecc(ibody) * ecc(ibody)))
 gravparam = totalmass
 
 if (semilatusrectum > small) then
 
-vmag(ibody) = sqrt(gravparam / semilatusrectum);
-
+   vmag(ibody) = sqrt(gravparam / semilatusrectum);
+   
 else
-
-vmag(ibody) = 0.0;
+   
+   vmag(ibody) = 0.0;
 endif
 
 
-vel(1,ibody) = -vmag(ibody) * sin(nu(ibody));
-vel(2,ibody) = vmag(ibody) * (cos(nu(ibody)) + e(ibody));
+vel(1,ibody) = -vmag(ibody) * sin(trueanom(ibody));
+vel(2,ibody) = vmag(ibody) * (cos(trueanom(ibody)) + ecc(ibody));
 vel(3,ibody) = 0.0;
 
 ! 4. Begin rotations to correctly align the orbit
-! Firstly, Rotation around z axis by -argument of Periapsis */
+! Firstly, Rotation around z axis by -argument of Periapsis
 
-call rotate_Z(pos, nbodies, -1 * om);
-call rotate_Z(vel, nbodies, -1 * om);
+call rotate_Z(pos, nbodies, -1 * argper)
+call rotate_Z(vel, nbodies, -1 * argper)
 
-! Secondly, Rotate around x by -inclination */
+! Secondly, Rotate around x by -inclination
 
+call rotate_X(pos, nbodies, -1 * inc)
+call rotate_X(vel, nbodies, -1 * inc)
 
-call rotate_X(pos, nbodies, -1 * i);
-call rotate_X(vel, nbodies, -1 * i);
+! Lastly, Rotate around z by longitudeAscendingNode
 
-! Lastly, Rotate around z by longitudeAscendingNode */
-
-call rotate_Z(pos,nbodies,-1 * long);
-call rotate_Z(vel,nbodies,-1 * long);
+call rotate_Z(pos,nbodies,-1 * longascend)
+call rotate_Z(vel,nbodies,-1 * longascend)
 
 enddo
 

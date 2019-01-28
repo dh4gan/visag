@@ -23,10 +23,10 @@ call nbody_system_properties
 
      if(alive(iplanet)==0) cycle ! Skip finished particles
 
-      write(ibody+inbodylog,102) t/yr, mass(ibody),pos(:,ibody), vel(:,ibody), &
-           acc(:,ibody),ap(iplanet), ecc(iplanet), &
-           inc(iplanet), longascend(iplanet), &
-           argper(iplanet), trueanom(iplanet), &
+      write(ibody+inbodylog,102) t, mass(ibody),pos(:,ibody), vel(:,ibody), &
+           acc(:,ibody),a(ibody), ecc(ibody), &
+           inc(ibody), longascend(ibody), &
+           argper(ibody), trueanom(ibody), &
            ekin(ibody),epot(ibody), etot(ibody),angmom(:,ibody), &
            tmig(iplanet)
       call flush(ibody)
@@ -34,7 +34,7 @@ call nbody_system_properties
 
 ! Write log file containing global simulation data
 
-write(inbodylog,103) t/yr, dt_nbody/twopi, 100.0*maxerror/tolerance, system_energy, dE, system_ang, dL
+write(inbodylog,103) t, dt_nbody/twopi, 100.0*maxerror/tolerance, system_energy, dE, system_ang, dL
 
 
 end subroutine nbody_output

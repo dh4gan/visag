@@ -7,7 +7,7 @@ module nbodydata
   real,parameter :: small = 1.0e-20
   real,parameter :: dampfac = 10.0
   real,parameter :: rsoft = 1.0e-5
-  real,parameter :: tolerance = 1.0e-4
+  real,parameter :: tolerance = 1.0e-2
 
   real :: system_ang, system_energy, initial_system_ang,initial_system_energy
   real :: dE, dL, dt_nbody, totalmass, maxerror

@@ -96,7 +96,7 @@ if(nbodychoice=='y') then
     newvel(:,:) = 0.0
 
     totalmass = totalmass/solarmass
-    dt_nbody = 1.0e-3 ! Set arbitrary small timestep initially
+    dt_nbody = 1.0e-2 ! Set arbitrary small timestep initially
     mass(1) = mstar/solarmass
 
     do ibody=2,nbodies

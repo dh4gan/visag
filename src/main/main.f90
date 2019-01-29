@@ -8,15 +8,18 @@ program semi_analytic_disc
 
   use gravdata
   use unitdata
+  use nbodydata, only: pos,vel
   
 
   real(kind=8) :: tnext
 
   integer :: i, ifirst, ifirst2
 
-
   !	Setup grid, etc			
   call setup
+
+  ! If running in N Body mode, initialise N Body timestep
+  call nbody_timestep(pos,vel)
 
   !	Write first dump
   t = 0.0d0
@@ -44,7 +47,7 @@ program semi_analytic_disc
         snapshotcounter = snapshotcounter +1
         call write_dump
 
-        if(debug=="y" .and. nbodychoice=="y") call nbody_output(t)
+        if(nbodychoice=="y") call nbody_output(t)
 
         
         tnext = tdump*snapshotcounter

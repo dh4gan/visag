@@ -8,9 +8,9 @@ subroutine timestep
 !
 
 use gravdata
-use unitdata, only: yr,tdump, nbodychoice
+use unitdata, only: yr,twopi, tdump, nbodychoice
 use planetdata, only: torque_term, planetchoice
-use nbodydata, only: dt_nbody
+use nbodydata, only: dt_nbody, pos,vel
 
 implicit none
 
@@ -57,13 +57,24 @@ enddo
 
 dt = dtmin_visc
 dt = min(dtmin_visc, dtmin_torque)
-if(nbodychoice=="y") dt = min(dt, dt_nbody) ! If doing an N-Body run, check against minimum N Body timestep
+
+! If doing an N Body run, check against minimum N Body timestep
+if(nbodychoice=="y") then
+
+   call nbody_timestep(pos,vel)
+   dt = min(dt, dt_nbody*yr/twopi)  
+endif
+
 dt = min(dt,maxstep*yr) ! timestep can not exceed maxstep
-    
-!print*, t/yr,dt/yr, dtmin_visc/dtmin_torque
-IF(dt>tdump) then
+
+if(dt>tdump) then
    print*, 'Reducing dt for rapid snapshotting'
    dt = tdump/10.0
 endif
+
+print*, dt/yr, maxstep, dtmin_torque/yr, dtmin_visc/yr, dt_nbody/twopi
+
+! Make sure N Body timestep is corrected
+if(nbodychoice=="y") dt_nbody = dt*twopi/yr
 
 end subroutine timestep

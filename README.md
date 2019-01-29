@@ -1,5 +1,4 @@
 # visag - VIscous Semi-Analytic self-Gravitating discs
-======================================================
 
 This repository computes the viscous evolution of protostellar discs in 1D.  It either assumes a fixed Shakura-Sunyaev alpha parameter, or computes alpha as produced by self-gravitating disc turbulence in local thermodynamic equilibrium.
 
@@ -7,15 +6,18 @@ Features
 ----------------
 
 * Viscous evolution using Shakura-Sunyaev alpha prescription
-* Models run with fixed alpha or alpha due to gravitational instabilities
-* Mass loss due to photoevaporative winds (Owen et al 2011, Alexander and Armitage+++)
-* Tidal torques due to planetary bodies (Type I and Type II migration)
+* Models run with fixed alpha or alpha due to gravitational instability (assuming local thermodynamic equilibrium)
+* Mass loss due to X-Ray photoevaporative winds (Owen et al 2011, Alexander and Armitage 2007,2009)
+* Tidal torques due to planetary bodies, modelling both Type I and Type II migration (Nayakshin 2015)
 
+Features in development
+------------------------
+
+* Gravitational interactions between embedded planets (see `nbody` branch)
 
 Future Features
 ---------------
 
-* Gravitational Interactions between embedded planets
 * Layered accretion (GI/MRI mixtures)
 * Accretion from external envelope/other sources
 * (integration into `dh4gan/grapus`)
@@ -35,7 +37,15 @@ And run using the command
 
 `> ./visag`
 
-The input parameters are specified in `visag.params` - an example file is given in `params/`
+The input parameters are specified in `visag.params` - an example file is given in `params/`.  The code also reads `myeos.dat` from the run directory (this can also be found in `params/`).
+
+If planets are to be added, the user must specify a file to be read in `visag.params` that contains the planet data.  The planet file must have the following format:
+
+number of planets
+mass semimajor_axis
+mass semimajor_axis
+
+Masses must be in Jupiter masses, semimajor axis in AU.
 
 Plotting
 --------
